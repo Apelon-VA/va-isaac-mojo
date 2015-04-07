@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ihtsdo.otf.mojo.classifier;
+package gov.vha.isaac.mojo.hk2;
 
-import gov.vha.isaac.ochre.api.ClassifierService;
 import gov.vha.isaac.ochre.api.LookupService;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -25,13 +24,13 @@ import org.apache.maven.plugins.annotations.Mojo;
  *
  * @author kec
  */
-@Mojo( name = "full-classification")
-public class FullClassification extends AbstractMojo {
+@Mojo( name = "startup-isaac")
+
+public class StartupIsaac extends AbstractMojo {
 
     @Override
     public void execute()
             throws MojoExecutionException {
-        ClassifierService classifier = LookupService.getService(ClassifierService.class);
-        classifier.fullClassification();
+        LookupService.startupIsaac();
     }
 }

@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ihtsdo.otf.mojo.classifier;
+package gov.vha.isaac.mojo.classifier;
 
+import gov.vha.isaac.metadata.coordinates.EditCoordinates;
+import gov.vha.isaac.metadata.coordinates.LogicCoordinates;
+import gov.vha.isaac.metadata.coordinates.StampCoordinates;
 import gov.vha.isaac.ochre.api.ClassifierService;
 import gov.vha.isaac.ochre.api.LookupService;
+import gov.vha.isaac.ochre.api.coordinate.EditCoordinate;
+import gov.vha.isaac.ochre.api.coordinate.LogicCoordinate;
+import gov.vha.isaac.ochre.model.coordinate.EditCoordinateImpl;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -32,6 +38,12 @@ public class IncrementalClassification extends AbstractMojo {
     public void execute()
             throws MojoExecutionException {
         ClassifierService classifier = LookupService.getService(ClassifierService.class);
-        classifier.incrementalClassification();
+        EditCoordinate editCoordinate = EditCoordinates.getDefaultUserSolorOverlay();
+        LogicCoordinate logicCoordinate = LogicCoordinates.getStandardElProfile();
+        editCoordinate = new EditCoordinateImpl(
+                logicCoordinate.getClassifierSequence(), 
+                editCoordinate.getModuleSequence(), editCoordinate.getModuleSequence());
+        classifier.incrementalClassification(StampCoordinates.getDevelopmentLatest(), 
+                LogicCoordinates.getStandardElProfile(), editCoordinate);
     }
 }

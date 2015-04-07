@@ -16,8 +16,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ihtsdo.otf.mojo;
+package gov.vha.isaac.mojo;
 
+import gov.vha.isaac.metadata.source.IsaacMetadataAuxiliaryBinding;
 import java.beans.PropertyVetoException;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -79,7 +80,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 {
 	private final UUID authorUuid_ = TermAux.USER.getUuids()[0];
 	private final UUID pathUUID_ = TermAux.WB_AUX_PATH.getUuids()[0];
-	private final UUID moduleUuid_ = TtkRevision.unspecifiedModuleUuid;
+	private final UUID moduleUuid_ = IsaacMetadataAuxiliaryBinding.ISAAC_METADATA_MODULE.getUuids()[0];
 	private final long defaultTime_ = System.currentTimeMillis();
 	private final LanguageCode lang_ = LanguageCode.EN;
 	private final UUID isARelUuid_ = Snomed.IS_A.getUuids()[0];

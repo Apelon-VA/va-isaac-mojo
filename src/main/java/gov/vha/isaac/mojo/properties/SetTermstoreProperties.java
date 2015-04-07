@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.mojo.properties;
+package gov.vha.isaac.mojo.properties;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;

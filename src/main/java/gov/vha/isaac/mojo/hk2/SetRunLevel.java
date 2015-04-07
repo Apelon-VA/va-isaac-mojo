@@ -1,10 +1,10 @@
-package org.ihtsdo.otf.mojo.hk2;
+package gov.vha.isaac.mojo.hk2;
 
+import gov.vha.isaac.ochre.api.LookupService;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.ihtsdo.otf.tcc.lookup.Hk2Looker;
 
 /**
  * Created by kec on 9/6/14.
@@ -18,6 +18,6 @@ public class SetRunLevel extends AbstractMojo {
     @Override
     public void execute()
             throws MojoExecutionException {
-        Hk2Looker.getRunLevelController().proceedTo(Integer.valueOf(runLevel));
+        LookupService.getRunLevelController().proceedTo(Integer.valueOf(runLevel));
     }
 }

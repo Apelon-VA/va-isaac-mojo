@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ihtsdo.otf.mojo.termstore;
+package gov.vha.isaac.mojo.termstore;
 
 import gov.vha.isaac.ochre.api.LookupService;
 import gov.vha.isaac.ochre.api.ObjectChronicleTaskService;
@@ -28,13 +28,13 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * Goal which loads a database from eConcept files onto the GitFlow master
+ * Goal which loads a database from eConcept files onto the GitFlow Development
  * path.
  */
-@Mojo(name = "load-onto-master",
+@Mojo(name = "load-onto-development",
         defaultPhase = LifecyclePhase.PROCESS_SOURCES)
 
-public class LoadOntoMaster extends AbstractMojo {
+public class LoadOntoDevelopment extends AbstractMojo {
 
     /**
      * {@code eConcept format} files to import.
@@ -47,7 +47,7 @@ public class LoadOntoMaster extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         try {
             ObjectChronicleTaskService store = LookupService.getService(ObjectChronicleTaskService.class);
-            Task<Integer> loadTask = store.startLoadTask(StandardPaths.MASTER,
+            Task<Integer> loadTask = store.startLoadTask(StandardPaths.DEVELOPMENT,
                     Util.stringArrayToPathArray(econFileStrings));
             Util.addToTaskSetAndWaitTillDone(loadTask);
         } catch (InterruptedException | ExecutionException ex) {

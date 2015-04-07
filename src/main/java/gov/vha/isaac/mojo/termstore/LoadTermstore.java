@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.mojo.termstore;
+package gov.vha.isaac.mojo.termstore;
 
 //~--- non-JDK imports --------------------------------------------------------
 

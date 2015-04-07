@@ -16,7 +16,7 @@
 
 
 
-package org.ihtsdo.otf.mojo.query;
+package gov.vha.isaac.mojo.query;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;

@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.ihtsdo.otf.mojo.classifier;
+package gov.vha.isaac.mojo.classifier;
 
+import gov.vha.isaac.metadata.coordinates.LogicCoordinates;
 import gov.vha.isaac.ochre.api.ClassifierService;
 import gov.vha.isaac.ochre.api.LookupService;
 import org.apache.maven.plugin.AbstractMojo;
@@ -32,6 +33,6 @@ public class InitializeClassifier extends AbstractMojo {
     public void execute()
             throws MojoExecutionException {
         ClassifierService classifier = LookupService.getService(ClassifierService.class);
-        classifier.initialize();
+        classifier.initialize(LogicCoordinates.getStandardElProfile());
     }
 }

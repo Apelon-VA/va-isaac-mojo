@@ -1,4 +1,4 @@
-package org.ihtsdo.otf.mojo.termstore;
+package gov.vha.isaac.mojo.termstore;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
