@@ -80,7 +80,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 {
 	private final UUID authorUuid_ = TermAux.USER.getUuids()[0];
 	private final UUID pathUUID_ = TermAux.WB_AUX_PATH.getUuids()[0];
-	private final UUID moduleUuid_ = IsaacMetadataAuxiliaryBinding.ISAAC_METADATA_MODULE.getUuids()[0];
+	private final UUID moduleUuid_ = IsaacMetadataAuxiliaryBinding.ISAAC_MODULE.getUuids()[0];
 	private final long defaultTime_ = System.currentTimeMillis();
 	private final LanguageCode lang_ = LanguageCode.EN;
 	private final UUID isARelUuid_ = Snomed.IS_A.getUuids()[0];

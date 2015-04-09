@@ -6,15 +6,15 @@
         <artifactId>isaac-parent</artifactId>
         <version>1.3</version>
     </parent>
-    <version>1.0</version>
+    <version>1.1</version>
     <artifactId>isaac-mojo</artifactId>
     <packaging>maven-plugin</packaging>
     <name>ISAAC Maven Mojos</name>
     <description>ISAAC Maven Mojos</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <ochre.version>2.21</ochre.version>
-        <isaac-metadata.version>1.22</isaac-metadata.version>
+        <ochre.version>2.22</ochre.version>
+        <isaac-metadata.version>1.24</isaac-metadata.version>
     </properties>
     <dependencies>
         <dependency>
