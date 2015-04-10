@@ -18,13 +18,15 @@ package gov.vha.isaac.mojo.hk2;
 import gov.vha.isaac.ochre.api.LookupService;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 /**
  *
  * @author kec
  */
-@Mojo( name = "shutdown-isaac")
+@Mojo( name = "shutdown-isaac",
+        defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 
 public class ShutdownIsaac extends AbstractMojo {
 

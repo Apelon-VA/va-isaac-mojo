@@ -33,7 +33,7 @@ import org.ihtsdo.otf.tcc.lookup.Hk2Looker;
  * Goal which loads a database from eConcept files.
  */
 @Mojo( name = "load-termstore",
-        defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+        defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 
 public class LoadTermstore extends AbstractMojo {
 

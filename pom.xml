@@ -13,8 +13,8 @@
     <description>ISAAC Maven Mojos</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <ochre.version>2.22</ochre.version>
-        <isaac-metadata.version>1.24</isaac-metadata.version>
+        <ochre.version>2.23-SNAPSHOT</ochre.version>
+        <isaac-metadata.version>1.25-SNAPSHOT</isaac-metadata.version>
     </properties>
     <dependencies>
         <dependency>
