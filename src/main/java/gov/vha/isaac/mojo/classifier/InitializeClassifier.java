@@ -20,13 +20,15 @@ import gov.vha.isaac.ochre.api.ClassifierService;
 import gov.vha.isaac.ochre.api.LookupService;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 /**
  *
  * @author kec
  */
-@Mojo( name = "initialize-classifier")
+@Mojo( name = "initialize-classifier",
+        defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class InitializeClassifier extends AbstractMojo {
 
     @Override
