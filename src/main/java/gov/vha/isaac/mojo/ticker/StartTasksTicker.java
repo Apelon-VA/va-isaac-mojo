@@ -1,6 +1,6 @@
-package gov.vha.isaac.mojo.hk2;
+package gov.vha.isaac.mojo.ticker;
 
-import gov.vha.isaac.ochre.api.LookupService;
+import gov.vha.isaac.ochre.api.progress.ActiveTasksTicker;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -8,18 +8,19 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * Created by kec on 9/6/14.
+ * Created by kec on 4/9/15.
  */
-@Mojo( name = "set-run-level",
+@Mojo( name = "start-tasks-ticker",
         defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
-public class SetRunLevel extends AbstractMojo {
+public class StartTasksTicker extends AbstractMojo {
 
-    @Parameter(required = true)
-    String runLevel;
+    @Parameter
+    String intervalInSeconds = "10";
 
     @Override
     public void execute()
             throws MojoExecutionException {
-        LookupService.getRunLevelController().proceedTo(Integer.valueOf(runLevel));
+        ActiveTasksTicker.start(Integer.parseInt(intervalInSeconds));
     }
+
 }

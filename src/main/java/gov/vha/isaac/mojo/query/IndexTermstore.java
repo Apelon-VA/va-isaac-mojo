@@ -39,7 +39,7 @@ import org.glassfish.hk2.api.MultiException;
  *
  */
 @Mojo( name = "index-termstore",
-        defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+        defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 
 public class IndexTermstore extends AbstractMojo {
 

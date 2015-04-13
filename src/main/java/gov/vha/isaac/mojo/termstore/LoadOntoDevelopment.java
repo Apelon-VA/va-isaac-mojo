@@ -32,7 +32,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * path.
  */
 @Mojo(name = "load-onto-development",
-        defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+        defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 
 public class LoadOntoDevelopment extends AbstractMojo {
 

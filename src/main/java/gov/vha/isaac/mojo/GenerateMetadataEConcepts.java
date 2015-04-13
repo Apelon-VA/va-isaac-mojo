@@ -75,7 +75,7 @@ import org.ihtsdo.otf.tcc.dto.component.relationship.TtkRelationshipChronicle;
  * @author <a href="mailto:daniel.armbrust.list@gmail.com">Dan Armbrust</a>
  */
 @Mojo( name = "generate-metadata-eConcepts",
-        defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+        defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class GenerateMetadataEConcepts extends AbstractMojo
 {
 	private final UUID authorUuid_ = TermAux.USER.getUuids()[0];
