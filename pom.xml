@@ -57,6 +57,10 @@
                     <execution>
                         <id>default-descriptor</id>
                         <phase>process-classes</phase>
+                        <configuration>
+                            <goalPrefix>isaac-mojo</goalPrefix>
+                            <!--outputDirectory>target/dir</outputDirectory-->
+                        </configuration>
                     </execution>
                     <!-- if you want to generate help goal -->
                     <execution>
@@ -64,6 +68,10 @@
                         <goals>
                             <goal>helpmojo</goal>
                         </goals>
+                        <configuration>
+                            <goalPrefix>isaac-mojo</goalPrefix>
+                            <!--outputDirectory>target/dir</outputDirectory-->
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
