@@ -32,7 +32,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * path.
  */
 @Mojo(name = "load-onto-master",
-        defaultPhase = LifecyclePhase.PROCESS_SOURCES)
+        defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 
 public class LoadOntoMaster extends AbstractMojo {
 

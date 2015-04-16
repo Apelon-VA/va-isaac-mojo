@@ -25,13 +25,15 @@ import gov.vha.isaac.ochre.api.coordinate.LogicCoordinate;
 import gov.vha.isaac.ochre.model.coordinate.EditCoordinateImpl;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 /**
  *
  * @author kec
  */
-@Mojo( name = "full-classification")
+@Mojo( name = "full-classification",
+        defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class FullClassification extends AbstractMojo {
 
     @Override
