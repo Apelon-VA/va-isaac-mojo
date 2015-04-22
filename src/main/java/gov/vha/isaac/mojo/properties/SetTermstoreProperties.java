@@ -5,7 +5,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import gov.vha.isaac.lookup.constants.Constants;
+import gov.vha.isaac.ochre.api.constants.Constants;
 
 /**
  * Created by kec on 9/13/14.
@@ -20,18 +20,21 @@ public class SetTermstoreProperties extends AbstractMojo {
 
     @Parameter
     String searchRootLocation;
+    
+    @Parameter
+    String datastoreRootLocation;
 
     @Override
-    public void execute()
-            throws MojoExecutionException {
+    public void execute() throws MojoExecutionException {
 
+        if (datastoreRootLocation != null) {
+            System.setProperty(Constants.DATA_STORE_ROOT_LOCATION_PROPERTY, datastoreRootLocation);
+        }
         if (termstoreRootLocation != null) {
-            System.setProperty(Constants.CHRONICLE_COLLECTIONS_ROOT_LOCATION_PROPERTY,
-                    termstoreRootLocation);
+            System.setProperty(Constants.CHRONICLE_COLLECTIONS_ROOT_LOCATION_PROPERTY, termstoreRootLocation);
         }
         if (searchRootLocation != null) {
-            System.setProperty(Constants.SEARCH_ROOT_LOCATION_PROPERTY,
-                    searchRootLocation);
+            System.setProperty(Constants.SEARCH_ROOT_LOCATION_PROPERTY, searchRootLocation);
         }
     }
 }
