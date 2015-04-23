@@ -36,6 +36,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.ihtsdo.otf.tcc.api.blueprint.DescriptionCAB;
 import org.ihtsdo.otf.tcc.api.blueprint.RefexCAB;
 import org.ihtsdo.otf.tcc.api.blueprint.RefexDynamicCAB;
@@ -124,35 +125,37 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 
 	/**
 	 * Name and location of the output file.
-	 * 
-	 * @parameter expression="${project.build.directory}/metadataEConcepts.jbin"
-	 * @required
 	 */
+	@Parameter (required = true)
 	private File outputFile;
 
 	/**
 	 * Fully specified class names which should be scanned for public, static variables which are instances of {@link ConceptSpec}.
 	 * 
 	 * Each {@link ConceptSpec} found will be output to the eConcept file.
-	 * 
-	 * @parameter
-	 * @optional
 	 */
+	@Parameter
 	private String[] classesWithConceptSpecs;
 
 	/**
 	 * Any other {@link ConceptSpec} which should be built into the eConcept file.
-	 *
-	 * @parameter
-	 * @optional
 	 */
+	@Parameter
 	private ConceptSpec[] conceptSpecs;
+	
+	/**
+	 * UUIDs of root concepts from the terminologies that are being loaded which should be added
+	 * as children of {@link ISAAC#ISAAC_ROOT}.  Eventually specifying these should be unnecessary, 
+	 * as eConcepts file should link their own root concepts to the new isaac root
+	 */
+	
+	@Parameter
+	private MojoConceptSpec[] terminologyRoots;
 
 	/**
 	 * Instead of writing the default jbin format, write the eccs change set format instead.
-	 *
-	 * @optional
 	 */
+	@Parameter
 	private boolean writeAsChangeSetFormat = false;
 	
 	/**
@@ -210,6 +213,21 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 				for (String cs : classesWithConceptSpecs)
 				{
 					conceptSpecsToProcess.addAll(getSpecsFromClass(cs));
+				}
+			}
+			
+			if (terminologyRoots != null && terminologyRoots.length > 0)
+			{
+				getLog().info("Will create " + terminologyRoots.length + " additional root concepts");
+				for (int i = 0; i < terminologyRoots.length; i++)
+				{
+					ConceptSpec cs = terminologyRoots[i].getConceptSpec();
+					//Need to do stated and inferred, otherwise, we can't browse, on inferred mode, nor on inferred_then_stated mode
+					cs.setRelSpecs(new RelSpec[] {new RelSpec(cs, Snomed.IS_A, IsaacMetadataAuxiliaryBinding.ISAAC_ROOT)}); //stated
+					
+					//leave this off for now, see if classifier cleans it up
+							//new RelSpec(conceptsToAddAsRoots[i], Snomed.IS_A, ISAAC.ISAAC_ROOT, SnomedMetadataRf2.INFERRED_RELATIONSHIP_RF2)}); //inferred  
+					conceptSpecsToProcess.add(cs);
 				}
 			}
 			
