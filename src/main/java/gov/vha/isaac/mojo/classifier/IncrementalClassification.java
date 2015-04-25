@@ -22,6 +22,7 @@ import gov.vha.isaac.ochre.api.ClassifierService;
 import gov.vha.isaac.ochre.api.LookupService;
 import gov.vha.isaac.ochre.api.coordinate.EditCoordinate;
 import gov.vha.isaac.ochre.api.coordinate.LogicCoordinate;
+import gov.vha.isaac.ochre.collections.ConceptSequenceSet;
 import gov.vha.isaac.ochre.model.coordinate.EditCoordinateImpl;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -46,6 +47,6 @@ public class IncrementalClassification extends AbstractMojo {
                 logicCoordinate.getClassifierSequence(), 
                 editCoordinate.getModuleSequence(), editCoordinate.getModuleSequence());
         classifier.incrementalClassification(StampCoordinates.getDevelopmentLatest(), 
-                LogicCoordinates.getStandardElProfile(), editCoordinate);
+                LogicCoordinates.getStandardElProfile(), editCoordinate, new ConceptSequenceSet());
     }
 }
