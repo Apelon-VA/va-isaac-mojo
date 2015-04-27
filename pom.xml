@@ -13,6 +13,10 @@
     <name>ISAAC Maven Mojos</name>
 
     <description>ISAAC Maven Mojos</description>
+    
+    <scm>
+        <url>https://github.com/Apelon-VA/va-isaac-mojo.git</url>
+    </scm>
 
     <properties>
         <ochre.version>2.27-SNAPSHOT</ochre.version>
