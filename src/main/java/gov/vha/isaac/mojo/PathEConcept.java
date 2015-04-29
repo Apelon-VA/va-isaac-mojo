@@ -87,7 +87,7 @@ public class PathEConcept extends AbstractMojo {
             pathMember.setStatus(Status.ACTIVE);
             pathMember.setTime(startTime);
             pathMember.setAuthorUuid(TermAux.USER.getUuids()[0]);
-            pathMember.setModuleUuid(TermAux.TERM_AUX_MODULE.getUuids()[0]);
+            pathMember.setModuleUuid(TermAux.ISAAC_MODULE.getUuids()[0]);
             pathMember.setPathUuid(TermAux.WB_AUX_PATH.getUuids()[0]);
             pathMember.setAssemblageUuid(TermAux.PATH_REFSET.getUuids()[0]);
             pathMember.setUuid1(spec.getPathConcept().getUuids()[0]);
@@ -99,7 +99,7 @@ public class PathEConcept extends AbstractMojo {
             originMember.setStatus(Status.ACTIVE);
             originMember.setTime(startTime);
             originMember.setAuthorUuid(TermAux.USER.getUuids()[0]);
-            originMember.setModuleUuid(TermAux.TERM_AUX_MODULE.getUuids()[0]);
+            originMember.setModuleUuid(TermAux.ISAAC_MODULE.getUuids()[0]);
             originMember.setPathUuid(TermAux.WB_AUX_PATH.getUuids()[0]);
             originMember.setAssemblageUuid(TermAux.PATH_ORIGIN_REFSET.getUuids()[0]);
             originMember.setUuid1(spec.getOriginConcept().getUuids()[0]);
