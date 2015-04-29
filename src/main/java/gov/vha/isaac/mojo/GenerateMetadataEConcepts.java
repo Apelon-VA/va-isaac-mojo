@@ -45,9 +45,7 @@ import org.ihtsdo.otf.tcc.api.coordinate.Status;
 import org.ihtsdo.otf.tcc.api.lang.LanguageCode;
 import org.ihtsdo.otf.tcc.api.metadata.ComponentType;
 import org.ihtsdo.otf.tcc.api.metadata.binding.RefexDynamic;
-import org.ihtsdo.otf.tcc.api.metadata.binding.Snomed;
 import org.ihtsdo.otf.tcc.api.metadata.binding.SnomedMetadataRf2;
-import org.ihtsdo.otf.tcc.api.metadata.binding.TermAux;
 import org.ihtsdo.otf.tcc.api.refex.RefexType;
 import org.ihtsdo.otf.tcc.api.refexDynamic.data.RefexDynamicColumnInfo;
 import org.ihtsdo.otf.tcc.api.refexDynamic.data.RefexDynamicDataBI;
@@ -89,17 +87,17 @@ import org.ihtsdo.otf.tcc.dto.component.relationship.TtkRelationshipChronicle;
         defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class GenerateMetadataEConcepts extends AbstractMojo
 {
-	private static final UUID authorUuid_ = TermAux.USER.getPrimodialUuid();
-	private static final UUID pathUUID_ = TermAux.WB_AUX_PATH.getPrimodialUuid();
+	private static final UUID authorUuid_ = IsaacMetadataAuxiliaryBinding.USER.getPrimodialUuid();
+	private static final UUID pathUUID_ = IsaacMetadataAuxiliaryBinding.MASTER.getPrimodialUuid();
 	private static final UUID moduleUuid_ = IsaacMetadataAuxiliaryBinding.ISAAC_MODULE.getPrimodialUuid();
 	private static final LanguageCode lang_ = LanguageCode.EN;
-	private static final UUID isARelUuid_ = Snomed.IS_A.getPrimodialUuid();
-	private static final UUID definingCharacteristicStatedUuid_ = SnomedMetadataRf2.STATED_RELATIONSHIP_RF2.getPrimodialUuid();
-	private static final UUID notRefinableUuid = SnomedMetadataRf2.NOT_REFINABLE_RF2.getPrimodialUuid();
-	private static final UUID descriptionAcceptableUuid_ = SnomedMetadataRf2.ACCEPTABLE_RF2.getPrimodialUuid();
-	private static final UUID descriptionPreferredUuid_ = SnomedMetadataRf2.PREFERRED_RF2.getPrimodialUuid();
-	private static final UUID usEnRefsetUuid_ = SnomedMetadataRf2.US_ENGLISH_REFSET_RF2.getPrimodialUuid();
-	private static final UUID refsetMemberTypeNormalMemberUuid_ = UUID.fromString("cc624429-b17d-4ac5-a69e-0b32448aaf3c"); //normal member
+	private static final UUID isARelUuid_ = IsaacMetadataAuxiliaryBinding.IS_A.getPrimodialUuid();
+	private static final UUID definingCharacteristicStatedUuid_ =  IsaacMetadataAuxiliaryBinding.STATED.getPrimodialUuid();
+	private static final UUID notRefinableUuid = SnomedMetadataRf2.NOT_REFINABLE_RF2.getPrimodialUuid();  //TODO OCHRE need metadata for this?
+	private static final UUID descriptionAcceptableUuid_ = IsaacMetadataAuxiliaryBinding.ACCEPTABLE.getPrimodialUuid();
+	private static final UUID descriptionPreferredUuid_ = IsaacMetadataAuxiliaryBinding.PREFERRED.getPrimodialUuid();
+	private static final UUID usEnRefsetUuid_ = IsaacMetadataAuxiliaryBinding.US_ENGLISH_DIALECT.getPrimodialUuid();
+	private static final UUID refsetMemberTypeNormalMemberUuid_ = IsaacMetadataAuxiliaryBinding.NORMAL_MEMBER.getPrimodialUuid();
 
 	private static enum DescriptionType
 	{
@@ -109,15 +107,15 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 		{
 			if (this == FSN)
 			{
-				return Snomed.FULLY_SPECIFIED_DESCRIPTION_TYPE.getPrimodialUuid();
+				return IsaacMetadataAuxiliaryBinding.FULLY_SPECIFIED_NAME.getPrimodialUuid();
 			}
 			else if (this == SYNONYM)
 			{
-				return Snomed.SYNONYM_DESCRIPTION_TYPE.getPrimodialUuid();
+				return IsaacMetadataAuxiliaryBinding.SYNONYM.getPrimodialUuid();
 			}
 			else if (this == DEFINITION)
 			{
-				return Snomed.DEFINITION_DESCRIPTION_TYPE.getPrimodialUuid();
+				return IsaacMetadataAuxiliaryBinding.DEFINITION.getPrimodialUuid();
 			}
 			throw new RuntimeException("impossible");
 		}
@@ -223,7 +221,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 				{
 					ConceptSpec cs = terminologyRoots[i].getConceptSpec();
 					//Need to do stated and inferred, otherwise, we can't browse, on inferred mode, nor on inferred_then_stated mode
-					cs.setRelSpecs(new RelSpec[] {new RelSpec(cs, Snomed.IS_A, IsaacMetadataAuxiliaryBinding.ISAAC_ROOT)}); //stated
+					cs.setRelSpecs(new RelSpec[] {new RelSpec(cs, IsaacMetadataAuxiliaryBinding.IS_A, IsaacMetadataAuxiliaryBinding.ISAAC_ROOT)}); //stated
 					
 					//leave this off for now, see if classifier cleans it up
 							//new RelSpec(conceptsToAddAsRoots[i], Snomed.IS_A, ISAAC.ISAAC_ROOT, SnomedMetadataRf2.INFERRED_RELATIONSHIP_RF2)}); //inferred  
