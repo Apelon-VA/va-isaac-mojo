@@ -254,7 +254,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 					}
 				}
 				
-				if (RefexDynamic.REFEX_DYNAMIC_INDEX_CONFIGURATION.getPrimodialUuid().equals(cs.getPrimodialUuid()))
+				if (RefexDynamic.DYNAMIC_SEMEME_INDEX_CONFIGURATION.getPrimodialUuid().equals(cs.getPrimodialUuid()))
 				{
 					//Need to delay writing this concept
 					indexConfigConcept = converted;
@@ -309,7 +309,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 	}
 	
 	/**
-	 * @param namespace - optional - uses {@link RefexDynamic#REFEX_DYNAMIC_NAMESPACE} if not specified
+	 * @param namespace - optional - uses {@link RefexDynamic#DYNAMIC_SEMEME_NAMESPACE} if not specified
 	 * @return - the generated string used for refex creation 
 	 */
 	public static String setUUIDForRefex(TtkRefexDynamicMemberChronicle refexDynamic, TtkRefexDynamicData[] data, UUID namespace) throws NoSuchAlgorithmException, 
@@ -559,7 +559,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 	 */
 	public static TtkConceptChronicle indexRefex( List<UUID> refexesToIndex, List<Integer[]> columnConfiguration) throws IOException, NoSuchAlgorithmException, PropertyVetoException
 	{
-		TtkConceptChronicle result = convert(RefexDynamic.REFEX_DYNAMIC_INDEX_CONFIGURATION);
+		TtkConceptChronicle result = convert(RefexDynamic.DYNAMIC_SEMEME_INDEX_CONFIGURATION);
 		
 		configureDynamicRefexIndexes(result, refexesToIndex, columnConfiguration);
 		return result;
@@ -613,7 +613,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 		TtkDescriptionChronicle description = addDescription(concept, refexDescription, DescriptionType.DEFINITION, true);
 		
 		//Annotate the description as the 'special' type that means this concept is suitable for use as an assemblage concept
-		addDynamicAnnotation(description, RefexDynamic.REFEX_DYNAMIC_DEFINITION_DESCRIPTION.getPrimodialUuid(), new TtkRefexDynamicData[0]);
+		addDynamicAnnotation(description, RefexDynamic.DYNAMIC_SEMEME_DEFINITION_DESCRIPTION.getPrimodialUuid(), new TtkRefexDynamicData[0]);
 		
 		if (columns != null)
 		{
@@ -627,7 +627,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 				data[4] = new TtkRefexDynamicBoolean(col.isColumnRequired());
 				data[5] = (col.getValidator() == null ? null : new TtkRefexDynamicString(col.getValidator().name()));
 				data[6] = (col.getValidatorData() == null ? null : convertPolymorphicDataColumn(col.getValidatorData(), col.getValidatorData().getRefexDataType()));
-				addDynamicAnnotation(concept.getConceptAttributes(), RefexDynamic.REFEX_DYNAMIC_DEFINITION.getPrimodialUuid(), data);
+				addDynamicAnnotation(concept.getConceptAttributes(), RefexDynamic.DYNAMIC_SEMEME_EXTENSION_DEFINITION.getPrimodialUuid(), data);
 			}
 		}
 		
@@ -635,7 +635,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 		{
 			TtkRefexDynamicData[] data = new TtkRefexDynamicData[1];
 			data[0] = new TtkRefexDynamicString(referencedComponentTypeRestriction.name());
-			addDynamicAnnotation(concept.getConceptAttributes(), RefexDynamic.REFEX_DYNAMIC_REFERENCED_COMPONENT_RESTRICTION.getPrimodialUuid(), data);
+			addDynamicAnnotation(concept.getConceptAttributes(), RefexDynamic.DYNAMIC_SEMEME_REFERENCED_COMPONENT_RESTRICTION.getPrimodialUuid(), data);
 		}
 	}
 	
