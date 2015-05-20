@@ -16,7 +16,7 @@
 package gov.vha.isaac.mojo.classifier;
 
 import gov.vha.isaac.metadata.coordinates.LogicCoordinates;
-import gov.vha.isaac.ochre.api.ClassifierService;
+import gov.vha.isaac.ochre.api.classifier.ClassifierService;
 import gov.vha.isaac.ochre.api.LookupService;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;

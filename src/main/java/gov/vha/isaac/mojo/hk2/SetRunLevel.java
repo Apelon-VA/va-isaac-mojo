@@ -18,8 +18,7 @@ public class SetRunLevel extends AbstractMojo {
     String runLevel;
 
     @Override
-    public void execute()
-            throws MojoExecutionException {
-        LookupService.getRunLevelController().proceedTo(Integer.valueOf(runLevel));
+    public void execute() throws MojoExecutionException {
+        LookupService.setRunLevel(Integer.valueOf(runLevel));
     }
 }

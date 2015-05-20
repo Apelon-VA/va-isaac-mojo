@@ -36,6 +36,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.ihtsdo.otf.tcc.api.blueprint.DescriptionCAB;
 import org.ihtsdo.otf.tcc.api.blueprint.RefexCAB;
 import org.ihtsdo.otf.tcc.api.blueprint.RefexDynamicCAB;
@@ -44,9 +45,7 @@ import org.ihtsdo.otf.tcc.api.coordinate.Status;
 import org.ihtsdo.otf.tcc.api.lang.LanguageCode;
 import org.ihtsdo.otf.tcc.api.metadata.ComponentType;
 import org.ihtsdo.otf.tcc.api.metadata.binding.RefexDynamic;
-import org.ihtsdo.otf.tcc.api.metadata.binding.Snomed;
 import org.ihtsdo.otf.tcc.api.metadata.binding.SnomedMetadataRf2;
-import org.ihtsdo.otf.tcc.api.metadata.binding.TermAux;
 import org.ihtsdo.otf.tcc.api.refex.RefexType;
 import org.ihtsdo.otf.tcc.api.refexDynamic.data.RefexDynamicColumnInfo;
 import org.ihtsdo.otf.tcc.api.refexDynamic.data.RefexDynamicDataBI;
@@ -88,17 +87,17 @@ import org.ihtsdo.otf.tcc.dto.component.relationship.TtkRelationshipChronicle;
         defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
 public class GenerateMetadataEConcepts extends AbstractMojo
 {
-	private static final UUID authorUuid_ = TermAux.USER.getPrimodialUuid();
-	private static final UUID pathUUID_ = TermAux.WB_AUX_PATH.getPrimodialUuid();
+	private static final UUID authorUuid_ = IsaacMetadataAuxiliaryBinding.USER.getPrimodialUuid();
+	private static final UUID pathUUID_ = IsaacMetadataAuxiliaryBinding.MASTER.getPrimodialUuid();
 	private static final UUID moduleUuid_ = IsaacMetadataAuxiliaryBinding.ISAAC_MODULE.getPrimodialUuid();
 	private static final LanguageCode lang_ = LanguageCode.EN;
-	private static final UUID isARelUuid_ = Snomed.IS_A.getPrimodialUuid();
-	private static final UUID definingCharacteristicStatedUuid_ = SnomedMetadataRf2.STATED_RELATIONSHIP_RF2.getPrimodialUuid();
-	private static final UUID notRefinableUuid = SnomedMetadataRf2.NOT_REFINABLE_RF2.getPrimodialUuid();
-	private static final UUID descriptionAcceptableUuid_ = SnomedMetadataRf2.ACCEPTABLE_RF2.getPrimodialUuid();
-	private static final UUID descriptionPreferredUuid_ = SnomedMetadataRf2.PREFERRED_RF2.getPrimodialUuid();
-	private static final UUID usEnRefsetUuid_ = SnomedMetadataRf2.US_ENGLISH_REFSET_RF2.getPrimodialUuid();
-	private static final UUID refsetMemberTypeNormalMemberUuid_ = UUID.fromString("cc624429-b17d-4ac5-a69e-0b32448aaf3c"); //normal member
+	private static final UUID isARelUuid_ = IsaacMetadataAuxiliaryBinding.IS_A.getPrimodialUuid();
+	private static final UUID definingCharacteristicStatedUuid_ =  IsaacMetadataAuxiliaryBinding.STATED.getPrimodialUuid();
+	private static final UUID notRefinableUuid = SnomedMetadataRf2.NOT_REFINABLE_RF2.getPrimodialUuid();  //TODO OCHRE need metadata for this?
+	private static final UUID descriptionAcceptableUuid_ = IsaacMetadataAuxiliaryBinding.ACCEPTABLE.getPrimodialUuid();
+	private static final UUID descriptionPreferredUuid_ = IsaacMetadataAuxiliaryBinding.PREFERRED.getPrimodialUuid();
+	private static final UUID usEnRefsetUuid_ = IsaacMetadataAuxiliaryBinding.US_ENGLISH_DIALECT.getPrimodialUuid();
+	private static final UUID refsetMemberTypeNormalMemberUuid_ = IsaacMetadataAuxiliaryBinding.NORMAL_MEMBER.getPrimodialUuid();
 
 	private static enum DescriptionType
 	{
@@ -108,15 +107,15 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 		{
 			if (this == FSN)
 			{
-				return Snomed.FULLY_SPECIFIED_DESCRIPTION_TYPE.getPrimodialUuid();
+				return IsaacMetadataAuxiliaryBinding.FULLY_SPECIFIED_NAME.getPrimodialUuid();
 			}
 			else if (this == SYNONYM)
 			{
-				return Snomed.SYNONYM_DESCRIPTION_TYPE.getPrimodialUuid();
+				return IsaacMetadataAuxiliaryBinding.SYNONYM.getPrimodialUuid();
 			}
 			else if (this == DEFINITION)
 			{
-				return Snomed.DEFINITION_DESCRIPTION_TYPE.getPrimodialUuid();
+				return IsaacMetadataAuxiliaryBinding.DEFINITION.getPrimodialUuid();
 			}
 			throw new RuntimeException("impossible");
 		}
@@ -124,35 +123,37 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 
 	/**
 	 * Name and location of the output file.
-	 * 
-	 * @parameter expression="${project.build.directory}/metadataEConcepts.jbin"
-	 * @required
 	 */
+	@Parameter (required = true)
 	private File outputFile;
 
 	/**
 	 * Fully specified class names which should be scanned for public, static variables which are instances of {@link ConceptSpec}.
 	 * 
 	 * Each {@link ConceptSpec} found will be output to the eConcept file.
-	 * 
-	 * @parameter
-	 * @optional
 	 */
+	@Parameter
 	private String[] classesWithConceptSpecs;
 
 	/**
 	 * Any other {@link ConceptSpec} which should be built into the eConcept file.
-	 *
-	 * @parameter
-	 * @optional
 	 */
+	@Parameter
 	private ConceptSpec[] conceptSpecs;
+	
+	/**
+	 * UUIDs of root concepts from the terminologies that are being loaded which should be added
+	 * as children of {@link ISAAC#ISAAC_ROOT}.  Eventually specifying these should be unnecessary, 
+	 * as eConcepts file should link their own root concepts to the new isaac root
+	 */
+	
+	@Parameter
+	private MojoConceptSpec[] terminologyRoots;
 
 	/**
 	 * Instead of writing the default jbin format, write the eccs change set format instead.
-	 *
-	 * @optional
 	 */
+	@Parameter
 	private boolean writeAsChangeSetFormat = false;
 	
 	/**
@@ -213,6 +214,21 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 				}
 			}
 			
+			if (terminologyRoots != null && terminologyRoots.length > 0)
+			{
+				getLog().info("Will create " + terminologyRoots.length + " additional root concepts");
+				for (int i = 0; i < terminologyRoots.length; i++)
+				{
+					ConceptSpec cs = terminologyRoots[i].getConceptSpec();
+					//Need to do stated and inferred, otherwise, we can't browse, on inferred mode, nor on inferred_then_stated mode
+					cs.setRelSpecs(new RelSpec[] {new RelSpec(cs, IsaacMetadataAuxiliaryBinding.IS_A, IsaacMetadataAuxiliaryBinding.ISAAC_ROOT)}); //stated
+					
+					//leave this off for now, see if classifier cleans it up
+							//new RelSpec(conceptsToAddAsRoots[i], Snomed.IS_A, ISAAC.ISAAC_ROOT, SnomedMetadataRf2.INFERRED_RELATIONSHIP_RF2)}); //inferred  
+					conceptSpecsToProcess.add(cs);
+				}
+			}
+			
 			List<UUID> refexesToIndex = new ArrayList<>();
 			List<Integer[]> columnsToIndex = new ArrayList<>();
 			TtkConceptChronicle indexConfigConcept = null;
@@ -236,7 +252,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 					}
 				}
 				
-				if (RefexDynamic.REFEX_DYNAMIC_INDEX_CONFIGURATION.getPrimodialUuid().equals(cs.getPrimodialUuid()))
+				if (RefexDynamic.DYNAMIC_SEMEME_INDEX_CONFIGURATION.getPrimodialUuid().equals(cs.getPrimodialUuid()))
 				{
 					//Need to delay writing this concept
 					indexConfigConcept = converted;
@@ -291,7 +307,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 	}
 	
 	/**
-	 * @param namespace - optional - uses {@link RefexDynamic#REFEX_DYNAMIC_NAMESPACE} if not specified
+	 * @param namespace - optional - uses {@link RefexDynamic#DYNAMIC_SEMEME_NAMESPACE} if not specified
 	 * @return - the generated string used for refex creation 
 	 */
 	public static String setUUIDForRefex(TtkRefexDynamicMemberChronicle refexDynamic, TtkRefexDynamicData[] data, UUID namespace) throws NoSuchAlgorithmException, 
@@ -541,7 +557,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 	 */
 	public static TtkConceptChronicle indexRefex( List<UUID> refexesToIndex, List<Integer[]> columnConfiguration) throws IOException, NoSuchAlgorithmException, PropertyVetoException
 	{
-		TtkConceptChronicle result = convert(RefexDynamic.REFEX_DYNAMIC_INDEX_CONFIGURATION);
+		TtkConceptChronicle result = convert(RefexDynamic.DYNAMIC_SEMEME_INDEX_CONFIGURATION);
 		
 		configureDynamicRefexIndexes(result, refexesToIndex, columnConfiguration);
 		return result;
@@ -595,7 +611,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 		TtkDescriptionChronicle description = addDescription(concept, refexDescription, DescriptionType.DEFINITION, true);
 		
 		//Annotate the description as the 'special' type that means this concept is suitable for use as an assemblage concept
-		addDynamicAnnotation(description, RefexDynamic.REFEX_DYNAMIC_DEFINITION_DESCRIPTION.getPrimodialUuid(), new TtkRefexDynamicData[0]);
+		addDynamicAnnotation(description, RefexDynamic.DYNAMIC_SEMEME_DEFINITION_DESCRIPTION.getPrimodialUuid(), new TtkRefexDynamicData[0]);
 		
 		if (columns != null)
 		{
@@ -609,7 +625,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 				data[4] = new TtkRefexDynamicBoolean(col.isColumnRequired());
 				data[5] = (col.getValidator() == null ? null : new TtkRefexDynamicString(col.getValidator().name()));
 				data[6] = (col.getValidatorData() == null ? null : convertPolymorphicDataColumn(col.getValidatorData(), col.getValidatorData().getRefexDataType()));
-				addDynamicAnnotation(concept.getConceptAttributes(), RefexDynamic.REFEX_DYNAMIC_DEFINITION.getPrimodialUuid(), data);
+				addDynamicAnnotation(concept.getConceptAttributes(), RefexDynamic.DYNAMIC_SEMEME_EXTENSION_DEFINITION.getPrimodialUuid(), data);
 			}
 		}
 		
@@ -617,7 +633,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 		{
 			TtkRefexDynamicData[] data = new TtkRefexDynamicData[1];
 			data[0] = new TtkRefexDynamicString(referencedComponentTypeRestriction.name());
-			addDynamicAnnotation(concept.getConceptAttributes(), RefexDynamic.REFEX_DYNAMIC_REFERENCED_COMPONENT_RESTRICTION.getPrimodialUuid(), data);
+			addDynamicAnnotation(concept.getConceptAttributes(), RefexDynamic.DYNAMIC_SEMEME_REFERENCED_COMPONENT_RESTRICTION.getPrimodialUuid(), data);
 		}
 	}
 	
