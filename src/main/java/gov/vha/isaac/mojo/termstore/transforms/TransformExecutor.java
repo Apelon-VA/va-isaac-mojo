@@ -19,10 +19,13 @@
 package gov.vha.isaac.mojo.termstore.transforms;
 
 import gov.vha.isaac.ochre.api.LookupService;
+import gov.vha.isaac.ochre.api.Util;
+import gov.vha.isaac.ochre.util.WorkExecutors;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import javafx.concurrent.Task;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -105,31 +108,52 @@ public class TransformExecutor extends AbstractMojo
 				}
 				
 				AtomicInteger parallelChangeCount = new AtomicInteger();
+				AtomicInteger examinedConcepts = new AtomicInteger();
 				long start = System.currentTimeMillis();
 				
-				//Start a process to iterate all concepts in the DB.
-				store.getParallelConceptStream().forEach((cc) ->
+				Task<Void> processTransforms = new Task<Void>()
 				{
-					for (TransformConceptIterateI it : iterateTransforms)
+					int conCount = store.getConceptCount();
+					@Override
+					protected Void call() throws Exception
 					{
-						try
+						updateMessage("Processing Transforms");
+						updateTitle("Processing Transforms...");
+						//Start a process to iterate all concepts in the DB.
+						store.getParallelConceptStream().forEach((cc) ->
 						{
-							if (it.transform(store, cc))
+							examinedConcepts.getAndIncrement();
+							if (examinedConcepts.get() % 1000 == 0)
 							{
-								int last = parallelChangeCount.getAndIncrement();
-								//commit every 2000 changes (this is running in parallel)
-								if (last % 2000 == 0)
+								updateProgress(examinedConcepts.get(), conCount);
+							}
+							for (TransformConceptIterateI it : iterateTransforms)
+							{
+								try
 								{
-									store.commit();
+									if (it.transform(store, cc))
+									{
+										int last = parallelChangeCount.getAndIncrement();
+										//commit every 2000 changes (this is running in parallel)
+										if (last % 2000 == 0)
+										{
+											store.commit();
+											updateMessage("Processing Transforms - modified " + parallelChangeCount.get() + " concepts so far...");
+										}
+									}
+								}
+								catch (Exception e)
+								{
+									throw new RuntimeException(e);
 								}
 							}
-						}
-						catch (Exception e)
-						{
-							throw new RuntimeException(e);
-						}
+						});
+						return null;
 					}
-				});
+				};
+				
+				LookupService.getService(WorkExecutors.class).getExecutor().submit(processTransforms);
+				Util.addToTaskSetAndWaitTillDone(processTransforms);
 				
 				store.commit();
 				getLog().info("Parallel concept iterate completed in " + (System.currentTimeMillis() - start) + "ms.");
