@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>isaac-mojo</artifactId>
-    <version>1.6</version>
+    <version>1.7</version>
     <packaging>maven-plugin</packaging>
     <name>ISAAC Maven Mojos</name>
 
@@ -19,8 +19,8 @@
     </scm>
 
     <properties>
-        <ochre.version>2.27</ochre.version>
-        <isaac-metadata.version>1.29</isaac-metadata.version>
+        <ochre.version>2.28</ochre.version>
+        <isaac-metadata.version>1.30</isaac-metadata.version>
     </properties>
 
     <dependencies>
