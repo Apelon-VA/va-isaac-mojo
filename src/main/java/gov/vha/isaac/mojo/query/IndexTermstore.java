@@ -16,7 +16,6 @@ package gov.vha.isaac.mojo.query;
 
 //~--- non-JDK imports --------------------------------------------------------
 
-import java.io.IOException;
 import java.util.ArrayList;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,7 +30,6 @@ import org.ihtsdo.otf.tcc.model.index.service.IndexerBI;
 
 
 import java.util.List;
-import org.glassfish.hk2.api.MultiException;
 
 /**
  * Goal which indexes a database using indexer services on the classpath.
@@ -56,10 +54,10 @@ public class IndexTermstore extends AbstractMojo {
             getLog().info("Found indexers: " + indexerNames);
 
             getLog().info("Starting indexing. ");
-            store.index();
+            store.index().get();
             getLog().info("Finished indexing. ");
 
-        } catch (MultiException | IOException ex) {
+        } catch (Exception ex) {
             throw new MojoExecutionException(ex.getLocalizedMessage(), ex);
         }
     }
