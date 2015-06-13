@@ -88,7 +88,7 @@ public class PathEConcept extends AbstractMojo {
             pathMember.setTime(startTime);
             pathMember.setAuthorUuid(IsaacMetadataAuxiliaryBinding.USER.getPrimodialUuid());
             pathMember.setModuleUuid(IsaacMetadataAuxiliaryBinding.ISAAC_MODULE.getPrimodialUuid());
-            pathMember.setPathUuid(IsaacMetadataAuxiliaryBinding.MASTER.getPrimodialUuid());
+            pathMember.setPathUuid(IsaacMetadataAuxiliaryBinding.DEVELOPMENT.getPrimodialUuid());
             pathMember.setAssemblageUuid(IsaacMetadataAuxiliaryBinding.PATHS.getPrimodialUuid());
             pathMember.setUuid1(spec.getPathConcept().getUuids()[0]);
             pathMembers.add(pathMember);
@@ -100,7 +100,7 @@ public class PathEConcept extends AbstractMojo {
             originMember.setTime(startTime);
             originMember.setAuthorUuid(IsaacMetadataAuxiliaryBinding.USER.getPrimodialUuid());
             originMember.setModuleUuid(IsaacMetadataAuxiliaryBinding.ISAAC_MODULE.getPrimodialUuid());
-            originMember.setPathUuid(IsaacMetadataAuxiliaryBinding.MASTER.getPrimodialUuid());
+            originMember.setPathUuid(IsaacMetadataAuxiliaryBinding.DEVELOPMENT.getPrimodialUuid());
             originMember.setAssemblageUuid(IsaacMetadataAuxiliaryBinding.PATH_ORIGINS.getPrimodialUuid());
             originMember.setUuid1(spec.getOriginConcept().getUuids()[0]);
             originMember.setInt1(Integer.MAX_VALUE);
