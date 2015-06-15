@@ -100,8 +100,8 @@ public class PathEConcept extends AbstractMojo {
             originMember.setTime(startTime);
             originMember.setAuthorUuid(IsaacMetadataAuxiliaryBinding.USER.getPrimodialUuid());
             originMember.setModuleUuid(IsaacMetadataAuxiliaryBinding.ISAAC_MODULE.getPrimodialUuid());
-            originMember.setPathUuid(IsaacMetadataAuxiliaryBinding.MASTER.getPrimodialUuid());
             originMember.setAssemblageUuid(IsaacMetadataAuxiliaryBinding.PATH_ORIGINS_ASSEMBLAGE.getPrimodialUuid());
+            originMember.setPathUuid(IsaacMetadataAuxiliaryBinding.DEVELOPMENT.getPrimodialUuid());
             originMember.setUuid1(spec.getOriginConcept().getUuids()[0]);
             originMember.setInt1(Integer.MAX_VALUE);
             originMembers.add(originMember);

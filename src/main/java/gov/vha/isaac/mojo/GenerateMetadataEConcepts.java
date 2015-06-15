@@ -88,7 +88,7 @@ import org.ihtsdo.otf.tcc.dto.component.relationship.TtkRelationshipChronicle;
 public class GenerateMetadataEConcepts extends AbstractMojo
 {
 	private static final UUID authorUuid_ = IsaacMetadataAuxiliaryBinding.USER.getPrimodialUuid();
-	private static final UUID pathUUID_ = IsaacMetadataAuxiliaryBinding.MASTER.getPrimodialUuid();
+	private static final UUID pathUUID_ = IsaacMetadataAuxiliaryBinding.DEVELOPMENT.getPrimodialUuid();
 	private static final UUID moduleUuid_ = IsaacMetadataAuxiliaryBinding.ISAAC_MODULE.getPrimodialUuid();
 	private static final LanguageCode lang_ = LanguageCode.EN;
 	private static final UUID isARelUuid_ = IsaacMetadataAuxiliaryBinding.IS_A.getPrimodialUuid();
