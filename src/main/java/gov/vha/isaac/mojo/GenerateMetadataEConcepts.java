@@ -55,7 +55,7 @@ import org.ihtsdo.otf.tcc.api.spec.ConceptSpec;
 import org.ihtsdo.otf.tcc.api.spec.ConceptSpecWithDescriptions;
 import org.ihtsdo.otf.tcc.api.spec.DynamicRefexConceptSpec;
 import org.ihtsdo.otf.tcc.api.spec.RelSpec;
-import org.ihtsdo.otf.tcc.api.uuid.UuidT5Generator;
+import gov.vha.isaac.ochre.util.UuidT5Generator;
 import org.ihtsdo.otf.tcc.dto.TtkConceptChronicle;
 import org.ihtsdo.otf.tcc.dto.component.TtkComponentChronicle;
 import org.ihtsdo.otf.tcc.dto.component.TtkRevision;
@@ -287,7 +287,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 		}
 	}
 	
-	public static TtkRefexDynamicMemberChronicle addDynamicAnnotation(TtkComponentChronicle<?> component, UUID assemblageID, TtkRefexDynamicData[] data) 
+	public static TtkRefexDynamicMemberChronicle addDynamicAnnotation(TtkComponentChronicle<?,?> component, UUID assemblageID, TtkRefexDynamicData[] data) 
 			throws NoSuchAlgorithmException, UnsupportedEncodingException
 	{
 		//TODO this should have a validator for data columns aligning with the refex description
@@ -470,7 +470,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 	 * @throws UnsupportedEncodingException
 	 * @throws NoSuchAlgorithmException
 	 */
-	public static TtkRefexUuidMemberChronicle addUuidAnnotation(TtkComponentChronicle<?> component, UUID valueConcept, UUID refsetUuid)
+	public static TtkRefexUuidMemberChronicle addUuidAnnotation(TtkComponentChronicle<?,?> component, UUID valueConcept, UUID refsetUuid)
 	{
 		try
 		{

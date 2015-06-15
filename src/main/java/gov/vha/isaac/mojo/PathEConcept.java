@@ -89,7 +89,7 @@ public class PathEConcept extends AbstractMojo {
             pathMember.setAuthorUuid(IsaacMetadataAuxiliaryBinding.USER.getPrimodialUuid());
             pathMember.setModuleUuid(IsaacMetadataAuxiliaryBinding.ISAAC_MODULE.getPrimodialUuid());
             pathMember.setPathUuid(IsaacMetadataAuxiliaryBinding.MASTER.getPrimodialUuid());
-            pathMember.setAssemblageUuid(IsaacMetadataAuxiliaryBinding.PATHS.getPrimodialUuid());
+            pathMember.setAssemblageUuid(IsaacMetadataAuxiliaryBinding.PATHS_ASSEMBLAGE.getPrimodialUuid());
             pathMember.setUuid1(spec.getPathConcept().getUuids()[0]);
             pathMembers.add(pathMember);
 
@@ -101,18 +101,18 @@ public class PathEConcept extends AbstractMojo {
             originMember.setAuthorUuid(IsaacMetadataAuxiliaryBinding.USER.getPrimodialUuid());
             originMember.setModuleUuid(IsaacMetadataAuxiliaryBinding.ISAAC_MODULE.getPrimodialUuid());
             originMember.setPathUuid(IsaacMetadataAuxiliaryBinding.MASTER.getPrimodialUuid());
-            originMember.setAssemblageUuid(IsaacMetadataAuxiliaryBinding.PATH_ORIGINS.getPrimodialUuid());
+            originMember.setAssemblageUuid(IsaacMetadataAuxiliaryBinding.PATH_ORIGINS_ASSEMBLAGE.getPrimodialUuid());
             originMember.setUuid1(spec.getOriginConcept().getUuids()[0]);
             originMember.setInt1(Integer.MAX_VALUE);
             originMembers.add(originMember);
         }
 
         TtkConceptChronicle pathRefsetConcept = new TtkConceptChronicle();
-        pathRefsetConcept.setPrimordialUuid(IsaacMetadataAuxiliaryBinding.PATHS.getPrimodialUuid());
+        pathRefsetConcept.setPrimordialUuid(IsaacMetadataAuxiliaryBinding.PATHS_ASSEMBLAGE.getPrimodialUuid());
         pathRefsetConcept.setRefsetMembers(pathMembers);
 
         TtkConceptChronicle originRefsetConcept = new TtkConceptChronicle();
-        originRefsetConcept.setPrimordialUuid(IsaacMetadataAuxiliaryBinding.PATH_ORIGINS.getPrimodialUuid());
+        originRefsetConcept.setPrimordialUuid(IsaacMetadataAuxiliaryBinding.PATH_ORIGINS_ASSEMBLAGE.getPrimodialUuid());
         originRefsetConcept.setRefsetMembers(originMembers);
 
         //write to file (will merge with existing concepts, assumes that Path and Origin concepts have been loaded)
