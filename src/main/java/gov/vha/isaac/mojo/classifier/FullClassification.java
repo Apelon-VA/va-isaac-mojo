@@ -48,10 +48,8 @@ public class FullClassification extends AbstractMojo {
             LogicCoordinate logicCoordinate = LogicCoordinates.getStandardElProfile();
             editCoordinate = new EditCoordinateImpl(logicCoordinate.getClassifierSequence(),  
                     editCoordinate.getModuleSequence(), editCoordinate.getModuleSequence());
-            Task<ClassifierResults> classify = classifier.fullClassification(StampCoordinates.getDevelopmentLatest(),
-                    LogicCoordinates.getStandardElProfile(), editCoordinate);
-            LookupService.getService(WorkExecutors.class).getExecutor().execute(classify);
-            classify.get();  //wait for completion
+            classifier.startFullClassification(StampCoordinates.getDevelopmentLatest(),
+                    LogicCoordinates.getStandardElProfile(), editCoordinate).get();
         } catch (InterruptedException | ExecutionException ex) {
             throw new MojoExecutionException(ex.getLocalizedMessage(), ex);
         }

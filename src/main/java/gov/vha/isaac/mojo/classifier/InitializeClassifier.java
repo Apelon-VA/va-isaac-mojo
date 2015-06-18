@@ -15,6 +15,7 @@
  */
 package gov.vha.isaac.mojo.classifier;
 
+import java.util.concurrent.ExecutionException;
 import gov.vha.isaac.metadata.coordinates.LogicCoordinates;
 import gov.vha.isaac.ochre.api.classifier.ClassifierService;
 import gov.vha.isaac.ochre.api.LookupService;
@@ -32,9 +33,13 @@ import org.apache.maven.plugins.annotations.Mojo;
 public class InitializeClassifier extends AbstractMojo {
 
     @Override
-    public void execute()
-            throws MojoExecutionException {
+    public void execute() throws MojoExecutionException {
         ClassifierService classifier = LookupService.getService(ClassifierService.class);
-        classifier.initialize(LogicCoordinates.getStandardElProfile());
+        try {
+            classifier.startInitialize(LogicCoordinates.getStandardElProfile()).get();
+        }
+        catch (InterruptedException | ExecutionException e) {
+            throw new MojoExecutionException("Execution failure", e);
+        }
     }
 }
