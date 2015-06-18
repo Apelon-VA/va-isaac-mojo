@@ -18,11 +18,15 @@ package gov.vha.isaac.mojo.classifier;
 import gov.vha.isaac.metadata.coordinates.EditCoordinates;
 import gov.vha.isaac.metadata.coordinates.LogicCoordinates;
 import gov.vha.isaac.metadata.coordinates.StampCoordinates;
-import gov.vha.isaac.ochre.api.classifier.ClassifierService;
 import gov.vha.isaac.ochre.api.LookupService;
+import gov.vha.isaac.ochre.api.classifier.ClassifierResults;
+import gov.vha.isaac.ochre.api.classifier.ClassifierService;
 import gov.vha.isaac.ochre.api.coordinate.EditCoordinate;
 import gov.vha.isaac.ochre.api.coordinate.LogicCoordinate;
 import gov.vha.isaac.ochre.model.coordinate.EditCoordinateImpl;
+import gov.vha.isaac.ochre.util.WorkExecutors;
+import java.util.concurrent.ExecutionException;
+import javafx.concurrent.Task;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -37,15 +41,19 @@ import org.apache.maven.plugins.annotations.Mojo;
 public class FullClassification extends AbstractMojo {
 
     @Override
-    public void execute()
-            throws MojoExecutionException {
-        ClassifierService classifier = LookupService.getService(ClassifierService.class);
-        EditCoordinate editCoordinate = EditCoordinates.getDefaultUserSolorOverlay();
-        LogicCoordinate logicCoordinate = LogicCoordinates.getStandardElProfile();
-        editCoordinate = new EditCoordinateImpl(
-                logicCoordinate.getClassifierSequence(), 
-                editCoordinate.getModuleSequence(), editCoordinate.getModuleSequence());
-        classifier.fullClassification(StampCoordinates.getDevelopmentLatest(),
-                LogicCoordinates.getStandardElProfile(), editCoordinate);
+    public void execute() throws MojoExecutionException {
+        try {
+            ClassifierService classifier = LookupService.getService(ClassifierService.class);
+            EditCoordinate editCoordinate = EditCoordinates.getDefaultUserSolorOverlay();
+            LogicCoordinate logicCoordinate = LogicCoordinates.getStandardElProfile();
+            editCoordinate = new EditCoordinateImpl(logicCoordinate.getClassifierSequence(),  
+                    editCoordinate.getModuleSequence(), editCoordinate.getModuleSequence());
+            Task<ClassifierResults> classify = classifier.fullClassification(StampCoordinates.getDevelopmentLatest(),
+                    LogicCoordinates.getStandardElProfile(), editCoordinate);
+            LookupService.getService(WorkExecutors.class).getExecutor().execute(classify);
+            classify.get();  //wait for completion
+        } catch (InterruptedException | ExecutionException ex) {
+            throw new MojoExecutionException(ex.getLocalizedMessage(), ex);
+        }
     }
 }
