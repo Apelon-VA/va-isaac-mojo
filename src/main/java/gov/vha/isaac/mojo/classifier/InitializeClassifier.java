@@ -15,9 +15,6 @@
  */
 package gov.vha.isaac.mojo.classifier;
 
-import gov.vha.isaac.metadata.coordinates.LogicCoordinates;
-import gov.vha.isaac.ochre.api.classifier.ClassifierService;
-import gov.vha.isaac.ochre.api.LookupService;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -26,15 +23,17 @@ import org.apache.maven.plugins.annotations.Mojo;
 /**
  *
  * @author kec
+ * @deprecated Initialization is no longer necessary. Stated and inferred graphs
+ * are generated on load. 
  */
 @Mojo( name = "initialize-classifier",
         defaultPhase = LifecyclePhase.PROCESS_RESOURCES)
+@Deprecated
 public class InitializeClassifier extends AbstractMojo {
 
     @Override
     public void execute()
             throws MojoExecutionException {
-        ClassifierService classifier = LookupService.getService(ClassifierService.class);
-        classifier.initialize(LogicCoordinates.getStandardElProfile());
+        getLog().info("Initilization of classifier is no longer necessary.");
     }
 }

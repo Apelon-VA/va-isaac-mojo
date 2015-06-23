@@ -433,35 +433,23 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 	 */
 	public static TtkDescriptionChronicle addDescription(TtkConceptChronicle eConcept, String descriptionValue, DescriptionType wbDescriptionType, boolean preferred)
 	{
-		try
-		{
-			List<TtkDescriptionChronicle> descriptions = eConcept.getDescriptions();
-			if (descriptions == null)
-			{
-				descriptions = new ArrayList<TtkDescriptionChronicle>();
-				eConcept.setDescriptions(descriptions);
-			}
-			TtkDescriptionChronicle description = new TtkDescriptionChronicle();
-			description.setConceptUuid(eConcept.getPrimordialUuid());
-			description.setLang(lang_.getFormatedLanguageNoDialectCode());
-			//This aligns with what DescriptionCAB does
-			description.setPrimordialComponentUuid(UuidT5Generator.get(DescriptionCAB.descSpecNamespace,
-					eConcept.getPrimordialUuid().toString() + wbDescriptionType.getTypeUUID() + lang_.getFormatedLanguageNoDialectCode() + descriptionValue));
-
-			description.setTypeUuid(wbDescriptionType.getTypeUUID());
-			description.setText(descriptionValue);
-			setRevisionAttributes(description, Status.ACTIVE, eConcept.getConceptAttributes().getTime());
-
-			descriptions.add(description);
-			//Add the en-us info
-			addUuidAnnotation(description, (preferred ? descriptionPreferredUuid_ : descriptionAcceptableUuid_), usEnRefsetUuid_);
-
-			return description;
-		}
-		catch (NoSuchAlgorithmException | UnsupportedEncodingException e)
-		{
-			throw new RuntimeException("Shouldn't be possible");
-		}
+            List<TtkDescriptionChronicle> descriptions = eConcept.getDescriptions();
+            if (descriptions == null)
+            {
+                descriptions = new ArrayList<TtkDescriptionChronicle>();
+                eConcept.setDescriptions(descriptions);
+            }
+            TtkDescriptionChronicle description = new TtkDescriptionChronicle();
+            description.setConceptUuid(eConcept.getPrimordialUuid());
+            description.setLang(lang_.getFormatedLanguageNoDialectCode());
+            description.setPrimordialComponentUuid(UuidT5Generator.get(DescriptionCAB.descSpecNamespace,
+                    eConcept.getPrimordialUuid().toString() + wbDescriptionType.getTypeUUID() + lang_.getFormatedLanguageNoDialectCode() + descriptionValue));
+            description.setTypeUuid(wbDescriptionType.getTypeUUID());
+            description.setText(descriptionValue);
+            setRevisionAttributes(description, Status.ACTIVE, eConcept.getConceptAttributes().getTime());
+            descriptions.add(description);
+            addUuidAnnotation(description, (preferred ? descriptionPreferredUuid_ : descriptionAcceptableUuid_), usEnRefsetUuid_);
+            return description;
 	}
 
 	/**
@@ -472,34 +460,21 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 	 */
 	public static TtkRefexUuidMemberChronicle addUuidAnnotation(TtkComponentChronicle<?,?> component, UUID valueConcept, UUID refsetUuid)
 	{
-		try
-		{
-			List<TtkRefexAbstractMemberChronicle<?>> annotations = component.getAnnotations();
-
-			if (annotations == null)
-			{
-				annotations = new ArrayList<TtkRefexAbstractMemberChronicle<?>>();
-				component.setAnnotations(annotations);
-			}
-
-			TtkRefexUuidMemberChronicle conceptRefexMember = new TtkRefexUuidMemberChronicle();
-
-			conceptRefexMember.setReferencedComponentUuid(component.getPrimordialComponentUuid());
-			//This aligns with what RefexCAB does
-			conceptRefexMember.setPrimordialComponentUuid(UuidT5Generator.get(RefexCAB.refexSpecNamespace, RefexType.MEMBER.name() + refsetUuid.toString()
-					+ component.getPrimordialComponentUuid().toString()));
-			conceptRefexMember.setUuid1(valueConcept == null ? refsetMemberTypeNormalMemberUuid_ : valueConcept);
-			conceptRefexMember.setAssemblageUuid(refsetUuid);
-			setRevisionAttributes(conceptRefexMember, Status.ACTIVE, component.getTime());
-
-			annotations.add(conceptRefexMember);
-
-			return conceptRefexMember;
-		}
-		catch (NoSuchAlgorithmException | UnsupportedEncodingException e)
-		{
-			throw new RuntimeException("Shouldn't be possible");
-		}
+            List<TtkRefexAbstractMemberChronicle<?>> annotations = component.getAnnotations();
+            if (annotations == null)
+            {
+                annotations = new ArrayList<TtkRefexAbstractMemberChronicle<?>>();
+                component.setAnnotations(annotations);
+            }
+            TtkRefexUuidMemberChronicle conceptRefexMember = new TtkRefexUuidMemberChronicle();
+            conceptRefexMember.setReferencedComponentUuid(component.getPrimordialComponentUuid());
+            conceptRefexMember.setPrimordialComponentUuid(UuidT5Generator.get(RefexCAB.refexSpecNamespace, RefexType.MEMBER.name() + refsetUuid.toString()
+                    + component.getPrimordialComponentUuid().toString()));
+            conceptRefexMember.setUuid1(valueConcept == null ? refsetMemberTypeNormalMemberUuid_ : valueConcept);
+            conceptRefexMember.setAssemblageUuid(refsetUuid);
+            setRevisionAttributes(conceptRefexMember, Status.ACTIVE, component.getTime());
+            annotations.add(conceptRefexMember);
+            return conceptRefexMember;
 	}
 	
 	/**
@@ -510,38 +485,25 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 	 */
 	public static TtkRelationshipChronicle addRelationship(TtkConceptChronicle eConcept, UUID targetUuid, UUID relTypeUuid, UUID relCharacteristicUUID, Long time)
 	{
-		try
-		{
-			List<TtkRelationshipChronicle> relationships = eConcept.getRelationships();
-			if (relationships == null)
-			{
-				relationships = new ArrayList<TtkRelationshipChronicle>();
-				eConcept.setRelationships(relationships);
-			}
-
-			TtkRelationshipChronicle rel = new TtkRelationshipChronicle();
-			rel.setRelGroup(0);
-			rel.setCharacteristicUuid(relCharacteristicUUID == null ? definingCharacteristicStatedUuid_ : relCharacteristicUUID);
-			//this is what {@link RelationshipCAB} does (mostly)
-			rel.setPrimordialComponentUuid((UuidT5Generator.get(RelationshipCAB.relSpecNamespace, eConcept.getPrimordialUuid().toString() + relTypeUuid.toString()
-					+ targetUuid.toString() + rel.getRelGroup() 
-					+ (rel.getCharacteristicUuid().equals(definingCharacteristicStatedUuid_) ? "" : rel.getCharacteristicUuid().toString()))));
-					//This last line (above) is not being done by RelationshipCAB - but I think it is broken.  It needs to take the characteristic type into 
-					//account when generating a UUID, otherwise, we get duplicates.
-			rel.setC1Uuid(eConcept.getPrimordialUuid());
-			rel.setTypeUuid(relTypeUuid == null ? isARelUuid_ : relTypeUuid);
-			rel.setC2Uuid(targetUuid);
-			rel.setRefinabilityUuid(notRefinableUuid);
-			
-			setRevisionAttributes(rel, null, time == null ? eConcept.getConceptAttributes().getTime() : time.longValue());
-
-			relationships.add(rel);
-			return rel;
-		}
-		catch (NoSuchAlgorithmException | UnsupportedEncodingException e)
-		{
-			throw new RuntimeException("Shouldn't be possible");
-		}
+            List<TtkRelationshipChronicle> relationships = eConcept.getRelationships();
+            if (relationships == null)
+            {
+                relationships = new ArrayList<TtkRelationshipChronicle>();
+                eConcept.setRelationships(relationships);
+            }
+            TtkRelationshipChronicle rel = new TtkRelationshipChronicle();
+            rel.setRelGroup(0);
+            rel.setCharacteristicUuid(relCharacteristicUUID == null ? definingCharacteristicStatedUuid_ : relCharacteristicUUID);
+            rel.setPrimordialComponentUuid((UuidT5Generator.get(RelationshipCAB.relSpecNamespace, eConcept.getPrimordialUuid().toString() + relTypeUuid.toString()
+                    + targetUuid.toString() + rel.getRelGroup()
+                    + (rel.getCharacteristicUuid().equals(definingCharacteristicStatedUuid_) ? "" : rel.getCharacteristicUuid().toString()))));
+            rel.setC1Uuid(eConcept.getPrimordialUuid());
+            rel.setTypeUuid(relTypeUuid == null ? isARelUuid_ : relTypeUuid);
+            rel.setC2Uuid(targetUuid);
+            rel.setRefinabilityUuid(notRefinableUuid);
+            setRevisionAttributes(rel, null, time == null ? eConcept.getConceptAttributes().getTime() : time.longValue());
+            relationships.add(rel);
+            return rel;
 	}
 	
 	/**

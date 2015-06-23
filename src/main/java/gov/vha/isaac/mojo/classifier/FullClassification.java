@@ -22,6 +22,7 @@ import gov.vha.isaac.ochre.api.classifier.ClassifierService;
 import gov.vha.isaac.ochre.api.LookupService;
 import gov.vha.isaac.ochre.api.coordinate.EditCoordinate;
 import gov.vha.isaac.ochre.api.coordinate.LogicCoordinate;
+import gov.vha.isaac.ochre.api.logic.LogicService;
 import gov.vha.isaac.ochre.model.coordinate.EditCoordinateImpl;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -39,13 +40,14 @@ public class FullClassification extends AbstractMojo {
     @Override
     public void execute()
             throws MojoExecutionException {
-        ClassifierService classifier = LookupService.getService(ClassifierService.class);
+        LogicService logicService = LookupService.getService(LogicService.class);
         EditCoordinate editCoordinate = EditCoordinates.getDefaultUserSolorOverlay();
         LogicCoordinate logicCoordinate = LogicCoordinates.getStandardElProfile();
         editCoordinate = new EditCoordinateImpl(
                 logicCoordinate.getClassifierSequence(), 
                 editCoordinate.getModuleSequence(), editCoordinate.getModuleSequence());
-        classifier.fullClassification(StampCoordinates.getDevelopmentLatest(),
-                LogicCoordinates.getStandardElProfile(), editCoordinate);
+        
+        logicService.getClassifierService(StampCoordinates.getDevelopmentLatest(),
+                LogicCoordinates.getStandardElProfile(), editCoordinate).classify();
     }
 }
