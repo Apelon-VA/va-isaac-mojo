@@ -18,13 +18,12 @@
 
 package gov.vha.isaac.mojo.query;
 
-import java.io.IOException;
+import gov.vha.isaac.ochre.collections.NidSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import org.ihtsdo.otf.tcc.api.concept.ConceptFetcherBI;
 import org.ihtsdo.otf.tcc.api.concept.ProcessUnfetchedConceptDataBI;
 import org.ihtsdo.otf.tcc.api.coordinate.ViewCoordinate;
-import org.ihtsdo.otf.tcc.api.nid.NativeIdSetBI;
 import org.ihtsdo.otf.tcc.api.store.TerminologyStoreDI;
 import org.ihtsdo.otf.tcc.api.store.Ts;
 
@@ -71,7 +70,7 @@ public class IsKindOfMetrics implements ProcessUnfetchedConceptDataBI {
    //~--- get methods ---------------------------------------------------------
 
    @Override
-   public NativeIdSetBI getNidSet() throws IOException {
+   public NidSet getNidSet()  {
       return null;
    }
 
