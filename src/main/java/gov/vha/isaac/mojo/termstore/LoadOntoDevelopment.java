@@ -15,6 +15,7 @@
  */
 package gov.vha.isaac.mojo.termstore;
 
+import gov.vha.isaac.ochre.api.ConceptModel;
 import gov.vha.isaac.ochre.api.LookupService;
 import gov.vha.isaac.ochre.api.ObjectChronicleTaskService;
 import gov.vha.isaac.ochre.api.StandardPaths;
@@ -42,12 +43,22 @@ public class LoadOntoDevelopment extends AbstractMojo {
      */
     @Parameter(required = true)
     private String[] econFileStrings;
+    
+    /**
+     * {@code ConceptModel} for the resulting database. {@code ConceptModel.OTF_CONCEPT_MODEL} 
+     * by default. 
+     * TODO change to default ConceptModel.OCHRE_CONCEPT_MODEL when ready. 
+     */
+    @Parameter(defaultValue = "OTF_CONCEPT_MODEL", name = "conceptModelString")
+    private String conceptModelString;
 
     @Override
     public void execute() throws MojoExecutionException {
         try {
+            ConceptModel conceptModel = ConceptModel.valueOf(conceptModelString);
+            getLog().info("concept model: " + conceptModel);
             ObjectChronicleTaskService store = LookupService.getService(ObjectChronicleTaskService.class);
-            Task<Integer> loadTask = store.startLoadTask(StandardPaths.DEVELOPMENT,
+            Task<Integer> loadTask = store.startLoadTask(conceptModel, StandardPaths.DEVELOPMENT,
                     Util.stringArrayToPathArray(econFileStrings));
             Util.addToTaskSetAndWaitTillDone(loadTask);
         } catch (InterruptedException | ExecutionException ex) {

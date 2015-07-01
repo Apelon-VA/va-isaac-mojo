@@ -115,7 +115,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 			}
 			else if (this == DEFINITION)
 			{
-				return IsaacMetadataAuxiliaryBinding.DEFINITION.getPrimodialUuid();
+				return IsaacMetadataAuxiliaryBinding.DEFINITION_DESCRIPTION_TYPE.getPrimodialUuid();
 			}
 			throw new RuntimeException("impossible");
 		}
