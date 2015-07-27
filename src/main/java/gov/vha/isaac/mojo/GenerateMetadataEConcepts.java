@@ -396,8 +396,8 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 		}
 		else
 		{
-			addDescription(cc, cs.getDescription(), DescriptionType.FSN, true);
-			addDescription(cc, cs.getDescription(), DescriptionType.SYNONYM, true);
+			addDescription(cc, cs.getConceptDescriptionText(), DescriptionType.FSN, true);
+			addDescription(cc, cs.getConceptDescriptionText(), DescriptionType.SYNONYM, true);
 		}
 
 		for (RelSpec rs : cs.getRelSpecs())
