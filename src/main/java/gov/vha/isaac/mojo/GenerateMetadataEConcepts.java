@@ -18,7 +18,6 @@
  */
 package gov.vha.isaac.mojo;
 
-import gov.vha.isaac.metadata.source.IsaacMetadataAuxiliaryBinding;
 import java.beans.PropertyVetoException;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -39,23 +38,14 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.ihtsdo.otf.tcc.api.blueprint.DescriptionCAB;
 import org.ihtsdo.otf.tcc.api.blueprint.RefexCAB;
-import org.ihtsdo.otf.tcc.api.blueprint.RefexDynamicCAB;
 import org.ihtsdo.otf.tcc.api.blueprint.RelationshipCAB;
 import org.ihtsdo.otf.tcc.api.coordinate.Status;
 import org.ihtsdo.otf.tcc.api.lang.LanguageCode;
-import org.ihtsdo.otf.tcc.api.metadata.ComponentType;
-import org.ihtsdo.otf.tcc.api.metadata.binding.RefexDynamic;
 import org.ihtsdo.otf.tcc.api.metadata.binding.SnomedMetadataRf2;
 import org.ihtsdo.otf.tcc.api.refex.RefexType;
-import org.ihtsdo.otf.tcc.api.refexDynamic.data.RefexDynamicColumnInfo;
-import org.ihtsdo.otf.tcc.api.refexDynamic.data.RefexDynamicDataBI;
-import org.ihtsdo.otf.tcc.api.refexDynamic.data.RefexDynamicDataType;
-import org.ihtsdo.otf.tcc.api.refexDynamic.data.RefexDynamicUsageDescription;
 import org.ihtsdo.otf.tcc.api.spec.ConceptSpec;
 import org.ihtsdo.otf.tcc.api.spec.ConceptSpecWithDescriptions;
-import org.ihtsdo.otf.tcc.api.spec.DynamicRefexConceptSpec;
 import org.ihtsdo.otf.tcc.api.spec.RelSpec;
-import gov.vha.isaac.ochre.util.UuidT5Generator;
 import org.ihtsdo.otf.tcc.dto.TtkConceptChronicle;
 import org.ihtsdo.otf.tcc.dto.component.TtkComponentChronicle;
 import org.ihtsdo.otf.tcc.dto.component.TtkRevision;
@@ -75,6 +65,12 @@ import org.ihtsdo.otf.tcc.dto.component.refexDynamic.data.dataTypes.TtkRefexDyna
 import org.ihtsdo.otf.tcc.dto.component.refexDynamic.data.dataTypes.TtkRefexDynamicString;
 import org.ihtsdo.otf.tcc.dto.component.refexDynamic.data.dataTypes.TtkRefexDynamicUUID;
 import org.ihtsdo.otf.tcc.dto.component.relationship.TtkRelationshipChronicle;
+import gov.vha.isaac.metadata.source.IsaacMetadataAuxiliaryBinding;
+import gov.vha.isaac.ochre.api.component.sememe.version.DynamicSememe;
+import gov.vha.isaac.ochre.api.component.sememe.version.dynamicSememe.DynamicSememeConstants;
+import gov.vha.isaac.ochre.api.component.sememe.version.dynamicSememe.DynamicSememeDataBI;
+import gov.vha.isaac.ochre.api.component.sememe.version.dynamicSememe.DynamicSememeDataType;
+import gov.vha.isaac.ochre.util.UuidT5Generator;
 
 /**
  * {@link GenerateMetadataEConcepts}
@@ -238,21 +234,21 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 			{
 				TtkConceptChronicle converted = convert(cs);
 				
-				if (cs instanceof DynamicRefexConceptSpec)
-				{
-					DynamicRefexConceptSpec drcs = (DynamicRefexConceptSpec)cs;
-					turnConceptIntoDynamicRefexAssemblageConcept(converted, drcs.isAnnotationStyle(), drcs.getRefexDescription(), drcs.getRefexColumns(), 
-							drcs.getReferencedComponentTypeRestriction());
-					
-					if (drcs.getRequiredIndexes() != null)
-					{
-						//Here, we preconfigure any of the Dynamic Refexes that we are specifying, so that they get indexed during the DB build.
-						refexesToIndex.add(drcs.getPrimodialUuid());
-						columnsToIndex.add(drcs.getRequiredIndexes());
-					}
-				}
+//				if (cs instanceof DynamicRefexConceptSpec)
+//				{
+//					DynamicRefexConceptSpec drcs = (DynamicRefexConceptSpec)cs;
+//					turnConceptIntoDynamicRefexAssemblageConcept(converted, drcs.isAnnotationStyle(), drcs.getRefexDescription(), drcs.getRefexColumns(), 
+//							drcs.getReferencedComponentTypeRestriction());
+//					
+//					if (drcs.getRequiredIndexes() != null)
+//					{
+//						//Here, we preconfigure any of the Dynamic Refexes that we are specifying, so that they get indexed during the DB build.
+//						refexesToIndex.add(drcs.getPrimodialUuid());
+//						columnsToIndex.add(drcs.getRequiredIndexes());
+//					}
+//				}
 				
-				if (RefexDynamic.DYNAMIC_SEMEME_INDEX_CONFIGURATION.getPrimodialUuid().equals(cs.getPrimodialUuid()))
+				if (DynamicSememeConstants.DYNAMIC_SEMEME_INDEX_CONFIGURATION.getUUID().equals(cs.getPrimodialUuid()))
 				{
 					//Need to delay writing this concept
 					indexConfigConcept = converted;
@@ -291,31 +287,31 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 			throws NoSuchAlgorithmException, UnsupportedEncodingException
 	{
 		//TODO this should have a validator for data columns aligning with the refex description
-		TtkRefexDynamicMemberChronicle refexDynamic = new TtkRefexDynamicMemberChronicle();
-		refexDynamic.setComponentUuid(component.getPrimordialComponentUuid());
-		refexDynamic.setRefexAssemblageUuid(assemblageID);
-		refexDynamic.setData(data);
-		setUUIDForRefex(refexDynamic, data, null);
-		setRevisionAttributes(refexDynamic, null, component.getTime());
+		TtkRefexDynamicMemberChronicle DynamicSememe = new TtkRefexDynamicMemberChronicle();
+		DynamicSememe.setComponentUuid(component.getPrimordialComponentUuid());
+		DynamicSememe.setRefexAssemblageUuid(assemblageID);
+		DynamicSememe.setData(data);
+		setUUIDForRefex(DynamicSememe, data, null);
+		setRevisionAttributes(DynamicSememe, null, component.getTime());
 
 		if (component.getAnnotationsDynamic() == null)
 		{
 			component.setAnnotationsDynamic(new ArrayList<TtkRefexDynamicMemberChronicle>());
 		}
-		component.getAnnotationsDynamic().add(refexDynamic);
-		return refexDynamic;
+		component.getAnnotationsDynamic().add(DynamicSememe);
+		return DynamicSememe;
 	}
 	
 	/**
-	 * @param namespace - optional - uses {@link RefexDynamic#DYNAMIC_SEMEME_NAMESPACE} if not specified
+	 * @param namespace - optional - uses {@link DynamicSememe#DYNAMIC_SEMEME_NAMESPACE} if not specified
 	 * @return - the generated string used for refex creation 
 	 */
-	public static String setUUIDForRefex(TtkRefexDynamicMemberChronicle refexDynamic, TtkRefexDynamicData[] data, UUID namespace) throws NoSuchAlgorithmException, 
+	public static String setUUIDForRefex(TtkRefexDynamicMemberChronicle DynamicSememe, TtkRefexDynamicData[] data, UUID namespace) throws NoSuchAlgorithmException, 
 		UnsupportedEncodingException
 	{
 		StringBuilder sb = new StringBuilder();
-		sb.append(refexDynamic.getRefexAssemblageUuid().toString()); 
-		sb.append(refexDynamic.getComponentUuid().toString());
+		sb.append(DynamicSememe.getRefexAssemblageUuid().toString()); 
+		sb.append(DynamicSememe.getComponentUuid().toString());
 		if (data != null)
 		{
 			for (TtkRefexDynamicData d : data)
@@ -331,7 +327,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 				}
 			}
 		}
-		refexDynamic.setPrimordialComponentUuid(UuidT5Generator.get((namespace == null ? RefexDynamicCAB.refexDynamicNamespace : namespace), sb.toString()));
+		DynamicSememe.setPrimordialComponentUuid(UuidT5Generator.get((namespace == null ? RefexCAB.refexSpecNamespace : namespace), sb.toString()));
 		return sb.toString();
 	}
 	
@@ -343,7 +339,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 		
 		for (Field f : clazz.getDeclaredFields())
 		{
-			if (f.getType().equals(ConceptSpec.class) || f.getType().equals(ConceptSpecWithDescriptions.class) || f.getType().equals(DynamicRefexConceptSpec.class))
+			if (f.getType().equals(ConceptSpec.class) || f.getType().equals(ConceptSpecWithDescriptions.class))
 			{
 				f.setAccessible(true);
 				results.add((ConceptSpec)f.get(null));
@@ -506,25 +502,25 @@ public class GenerateMetadataEConcepts extends AbstractMojo
             return rel;
 	}
 	
-	/**
-	 * Create the 'special' TtkConceptChronicle that carries the index configuration - return it as a TtkConcept that would need to be 
-	 * written out, if you were writing an eConcept file, for example.  This snippit concept should be automatically merged into the 
-	 * main concept with the rest of the index config.
-	 * @param refexToIndex
-	 * @param columnsToIndex
-	 * @return
-	 * @throws IOException 
-	 * @throws PropertyVetoException 
-	 * @throws NoSuchAlgorithmException 
-	 */
-	public static TtkConceptChronicle indexRefex( List<UUID> refexesToIndex, List<Integer[]> columnConfiguration) throws IOException, NoSuchAlgorithmException, PropertyVetoException
-	{
-		TtkConceptChronicle result = convert(RefexDynamic.DYNAMIC_SEMEME_INDEX_CONFIGURATION);
-		
-		configureDynamicRefexIndexes(result, refexesToIndex, columnConfiguration);
-		return result;
-		
-	}
+//	/**
+//	 * Create the 'special' TtkConceptChronicle that carries the index configuration - return it as a TtkConcept that would need to be 
+//	 * written out, if you were writing an eConcept file, for example.  This snippit concept should be automatically merged into the 
+//	 * main concept with the rest of the index config.
+//	 * @param refexToIndex
+//	 * @param columnsToIndex
+//	 * @return
+//	 * @throws IOException 
+//	 * @throws PropertyVetoException 
+//	 * @throws NoSuchAlgorithmException 
+//	 */
+//	public static TtkConceptChronicle indexRefex( List<UUID> refexesToIndex, List<Integer[]> columnConfiguration) throws IOException, NoSuchAlgorithmException, PropertyVetoException
+//	{
+//		TtkConceptChronicle result = convert(DynamicSememeConstants.DYNAMIC_SEMEME_INDEX_CONFIGURATION);
+//		
+//		configureDynamicRefexIndexes(result, refexesToIndex, columnConfiguration);
+//		return result;
+//		
+//	}
 	
 	private static void configureDynamicRefexIndexes(TtkConceptChronicle storageConcept, List<UUID> refexesToIndex, List<Integer[]> columnConfiguration) 
 			throws NoSuchAlgorithmException, UnsupportedEncodingException, PropertyVetoException
@@ -537,9 +533,9 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 		
 		for (int i = 0; i < refexesToIndex.size(); i++)
 		{
-			TtkRefexDynamicMemberChronicle refexDynamic = new TtkRefexDynamicMemberChronicle();
-			refexDynamic.setComponentUuid(refexesToIndex.get(i));
-			refexDynamic.setRefexAssemblageUuid(storageConcept.getPrimordialUuid());  //This is a member refex - so assemblageID == storageConceptID
+			TtkRefexDynamicMemberChronicle DynamicSememe = new TtkRefexDynamicMemberChronicle();
+			DynamicSememe.setComponentUuid(refexesToIndex.get(i));
+			DynamicSememe.setRefexAssemblageUuid(storageConcept.getPrimordialUuid());  //This is a member refex - so assemblageID == storageConceptID
 			
 			TtkRefexDynamicData[] data = null;
 			if (columnConfiguration.get(i) != null && columnConfiguration.get(i).length > 0)
@@ -554,52 +550,52 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 				buf.setLength(buf.length() - 1);
 
 				data[0] = new TtkRefexDynamicString(buf.toString());
-				refexDynamic.setData(data);
+				DynamicSememe.setData(data);
 			}
-			setUUIDForRefex(refexDynamic, data, null);
-			setRevisionAttributes(refexDynamic, null, storageConcept.getConceptAttributes().getTime());
-			storageConcept.getRefsetMembersDynamic().add(refexDynamic);
+			setUUIDForRefex(DynamicSememe, data, null);
+			setRevisionAttributes(DynamicSememe, null, storageConcept.getConceptAttributes().getTime());
+			storageConcept.getRefsetMembersDynamic().add(DynamicSememe);
 		}
 	}
 	
-	/**
-	 * See {@link RefexDynamicUsageDescription} class for more details on this format.
-	 */
-	public static void turnConceptIntoDynamicRefexAssemblageConcept(TtkConceptChronicle concept, boolean annotationStyle, String refexDescription,
-			RefexDynamicColumnInfo[] columns, ComponentType referencedComponentTypeRestriction) throws PropertyVetoException, NoSuchAlgorithmException, UnsupportedEncodingException
-	{
-		concept.setAnnotationStyleRefex(annotationStyle);
-		//Add the special synonym to establish this as an assemblage concept
-		TtkDescriptionChronicle description = addDescription(concept, refexDescription, DescriptionType.DEFINITION, true);
-		
-		//Annotate the description as the 'special' type that means this concept is suitable for use as an assemblage concept
-		addDynamicAnnotation(description, RefexDynamic.DYNAMIC_SEMEME_DEFINITION_DESCRIPTION.getPrimodialUuid(), new TtkRefexDynamicData[0]);
-		
-		if (columns != null)
-		{
-			for (RefexDynamicColumnInfo col : columns)
-			{
-				TtkRefexDynamicData[] data = new TtkRefexDynamicData[7];
-				data[0] = new TtkRefexDynamicInteger(col.getColumnOrder());
-				data[1] = new TtkRefexDynamicUUID(col.getColumnDescriptionConcept());
-				data[2] = new TtkRefexDynamicString(col.getColumnDataType().name());
-				data[3] = convertPolymorphicDataColumn(col.getDefaultColumnValue(), col.getColumnDataType());
-				data[4] = new TtkRefexDynamicBoolean(col.isColumnRequired());
-				data[5] = (col.getValidator() == null ? null : new TtkRefexDynamicString(col.getValidator().name()));
-				data[6] = (col.getValidatorData() == null ? null : convertPolymorphicDataColumn(col.getValidatorData(), col.getValidatorData().getRefexDataType()));
-				addDynamicAnnotation(concept.getConceptAttributes(), RefexDynamic.DYNAMIC_SEMEME_EXTENSION_DEFINITION.getPrimodialUuid(), data);
-			}
-		}
-		
-		if (referencedComponentTypeRestriction != null && ComponentType.UNKNOWN != referencedComponentTypeRestriction)
-		{
-			TtkRefexDynamicData[] data = new TtkRefexDynamicData[1];
-			data[0] = new TtkRefexDynamicString(referencedComponentTypeRestriction.name());
-			addDynamicAnnotation(concept.getConceptAttributes(), RefexDynamic.DYNAMIC_SEMEME_REFERENCED_COMPONENT_RESTRICTION.getPrimodialUuid(), data);
-		}
-	}
+//	/**
+//	 * See {@link DynamicSememeUsageDescription} class for more details on this format.
+//	 */
+//	public static void turnConceptIntoDynamicRefexAssemblageConcept(TtkConceptChronicle concept, boolean annotationStyle, String refexDescription,
+//			DynamicSememeColumnInfo[] columns, ComponentType referencedComponentTypeRestriction) throws PropertyVetoException, NoSuchAlgorithmException, UnsupportedEncodingException
+//	{
+//		concept.setAnnotationStyleRefex(annotationStyle);
+//		//Add the special synonym to establish this as an assemblage concept
+//		TtkDescriptionChronicle description = addDescription(concept, refexDescription, DescriptionType.DEFINITION, true);
+//		
+//		//Annotate the description as the 'special' type that means this concept is suitable for use as an assemblage concept
+//		addDynamicAnnotation(description, DynamicSememeConstants.DYNAMIC_SEMEME_DEFINITION_DESCRIPTION.getUUID(), new TtkRefexDynamicData[0]);
+//		
+//		if (columns != null)
+//		{
+//			for (DynamicSememeColumnInfo col : columns)
+//			{
+//				TtkRefexDynamicData[] data = new TtkRefexDynamicData[7];
+//				data[0] = new TtkRefexDynamicInteger(col.getColumnOrder());
+//				data[1] = new TtkRefexDynamicUUID(col.getColumnDescriptionConcept());
+//				data[2] = new TtkRefexDynamicString(col.getColumnDataType().name());
+//				data[3] = convertPolymorphicDataColumn(col.getDefaultColumnValue(), col.getColumnDataType());
+//				data[4] = new TtkRefexDynamicBoolean(col.isColumnRequired());
+//				data[5] = (col.getValidator() == null ? null : new TtkRefexDynamicString(col.getValidator().name()));
+//				data[6] = (col.getValidatorData() == null ? null : convertPolymorphicDataColumn(col.getValidatorData(), col.getValidatorData().getRefexDataType()));
+//				addDynamicAnnotation(concept.getConceptAttributes(), DynamicSememeConstants.DYNAMIC_SEMEME_EXTENSION_DEFINITION.getUUID(), data);
+//			}
+//		}
+//		
+//		if (referencedComponentTypeRestriction != null && ComponentType.UNKNOWN != referencedComponentTypeRestriction)
+//		{
+//			TtkRefexDynamicData[] data = new TtkRefexDynamicData[1];
+//			data[0] = new TtkRefexDynamicString(referencedComponentTypeRestriction.name());
+//			addDynamicAnnotation(concept.getConceptAttributes(), DynamicSememeConstants.DYNAMIC_SEMEME_REFERENCED_COMPONENT_RESTRICTION.getUUID(), data);
+//		}
+//	}
 	
-	public static TtkRefexDynamicData convertPolymorphicDataColumn(RefexDynamicDataBI defaultValue, RefexDynamicDataType columnType) throws PropertyVetoException 
+	public static TtkRefexDynamicData convertPolymorphicDataColumn(DynamicSememeDataBI defaultValue, DynamicSememeDataType columnType) throws PropertyVetoException 
 	{
 		TtkRefexDynamicData result;
 		
@@ -607,43 +603,43 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 		{
 			try
 			{
-				if (RefexDynamicDataType.BOOLEAN == columnType)
+				if (DynamicSememeDataType.BOOLEAN == columnType)
 				{
 					result = new TtkRefexDynamicBoolean((Boolean)defaultValue.getDataObject());
 				}
-				else if (RefexDynamicDataType.BYTEARRAY == columnType)
+				else if (DynamicSememeDataType.BYTEARRAY == columnType)
 				{
 					result = new TtkRefexDynamicByteArray((byte[])defaultValue.getDataObject());
 				}
-				else if (RefexDynamicDataType.DOUBLE == columnType)
+				else if (DynamicSememeDataType.DOUBLE == columnType)
 				{
 					result = new TtkRefexDynamicDouble((Double)defaultValue.getDataObject());
 				}
-				else if (RefexDynamicDataType.FLOAT == columnType)
+				else if (DynamicSememeDataType.FLOAT == columnType)
 				{
 					result = new TtkRefexDynamicFloat((Float)defaultValue.getDataObject());
 				}
-				else if (RefexDynamicDataType.INTEGER == columnType)
+				else if (DynamicSememeDataType.INTEGER == columnType)
 				{
 					result = new TtkRefexDynamicInteger((Integer)defaultValue.getDataObject());
 				}
-				else if (RefexDynamicDataType.LONG == columnType)
+				else if (DynamicSememeDataType.LONG == columnType)
 				{
 					result = new TtkRefexDynamicLong((Long)defaultValue.getDataObject());
 				}
-				else if (RefexDynamicDataType.NID == columnType)
+				else if (DynamicSememeDataType.NID == columnType)
 				{
 					result = new TtkRefexDynamicNid((Integer)defaultValue.getDataObject());
 				}
-				else if (RefexDynamicDataType.STRING == columnType)
+				else if (DynamicSememeDataType.STRING == columnType)
 				{
 					result = new TtkRefexDynamicString((String)defaultValue.getDataObject());
 				}
-				else if (RefexDynamicDataType.UUID == columnType)
+				else if (DynamicSememeDataType.UUID == columnType)
 				{
 					result = new TtkRefexDynamicUUID((UUID)defaultValue.getDataObject());
 				}
-				else if (RefexDynamicDataType.POLYMORPHIC == columnType)
+				else if (DynamicSememeDataType.POLYMORPHIC == columnType)
 				{
 					throw new RuntimeException("Error in column - if default value is provided, the type cannot be polymorphic");
 				}
@@ -666,7 +662,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 	
 	public static void main(String[] args) throws MojoExecutionException, MojoFailureException
 	{
-		GenerateMetadataEConcepts gmc = new GenerateMetadataEConcepts(new File("foo.jbin"), new String[] {"org.ihtsdo.otf.tcc.api.metadata.binding.RefexDynamic"},
+		GenerateMetadataEConcepts gmc = new GenerateMetadataEConcepts(new File("foo.jbin"), new String[] {"org.ihtsdo.otf.tcc.api.metadata.binding.DynamicSememe"},
 				new ConceptSpec[0], false);
 		gmc.execute();
 	}
