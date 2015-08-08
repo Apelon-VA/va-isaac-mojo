@@ -8,7 +8,7 @@
     </parent>
 
     <artifactId>isaac-mojo</artifactId>
-    <version>1.10-SNAPSHOT</version>
+    <version>1.9</version>
     <packaging>maven-plugin</packaging>
     <name>ISAAC Maven Mojos</name>
 
