@@ -115,7 +115,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 			}
 			else if (this == DEFINITION)
 			{
-				return IsaacMetadataAuxiliaryBinding.DEFINITION.getPrimodialUuid();
+				return IsaacMetadataAuxiliaryBinding.DEFINITION_DESCRIPTION_TYPE.getPrimodialUuid();
 			}
 			throw new RuntimeException("impossible");
 		}
@@ -396,8 +396,8 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 		}
 		else
 		{
-			addDescription(cc, cs.getDescription(), DescriptionType.FSN, true);
-			addDescription(cc, cs.getDescription(), DescriptionType.SYNONYM, true);
+			addDescription(cc, cs.getConceptDescriptionText(), DescriptionType.FSN, true);
+			addDescription(cc, cs.getConceptDescriptionText(), DescriptionType.SYNONYM, true);
 		}
 
 		for (RelSpec rs : cs.getRelSpecs())
