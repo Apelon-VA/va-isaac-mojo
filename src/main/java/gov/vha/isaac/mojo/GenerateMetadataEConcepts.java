@@ -67,9 +67,9 @@ import org.ihtsdo.otf.tcc.dto.component.refexDynamic.data.dataTypes.TtkRefexDyna
 import org.ihtsdo.otf.tcc.dto.component.relationship.TtkRelationshipChronicle;
 import gov.vha.isaac.metadata.source.IsaacMetadataAuxiliaryBinding;
 import gov.vha.isaac.ochre.api.component.sememe.version.DynamicSememe;
-import gov.vha.isaac.ochre.api.component.sememe.version.dynamicSememe.DynamicSememeConstants;
 import gov.vha.isaac.ochre.api.component.sememe.version.dynamicSememe.DynamicSememeDataBI;
 import gov.vha.isaac.ochre.api.component.sememe.version.dynamicSememe.DynamicSememeDataType;
+import gov.vha.isaac.ochre.model.constants.IsaacMetadataConstants;
 import gov.vha.isaac.ochre.util.UuidT5Generator;
 
 /**
@@ -248,7 +248,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 //					}
 //				}
 				
-				if (DynamicSememeConstants.DYNAMIC_SEMEME_INDEX_CONFIGURATION.getUUID().equals(cs.getPrimodialUuid()))
+				if (IsaacMetadataConstants.DYNAMIC_SEMEME_INDEX_CONFIGURATION.getUUID().equals(cs.getPrimodialUuid()))
 				{
 					//Need to delay writing this concept
 					indexConfigConcept = converted;
