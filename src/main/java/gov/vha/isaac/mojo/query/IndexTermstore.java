@@ -45,7 +45,7 @@ public class IndexTermstore extends AbstractMojo {
             getLog().info("Found indexers: " + indexerNames);
 
             getLog().info("Starting indexing. ");
-            LookupService.get().getService(ObjectChronicleTaskService.class).startIndexTask((Class<? extends IndexServiceBI>[])null);
+            LookupService.get().getService(ObjectChronicleTaskService.class).startIndexTask((Class<? extends IndexServiceBI>[])null).get();
             getLog().info("Finished indexing. ");
 
         } catch (Exception ex) {
