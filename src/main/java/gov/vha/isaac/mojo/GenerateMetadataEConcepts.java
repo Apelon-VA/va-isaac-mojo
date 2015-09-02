@@ -481,7 +481,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 	private static void configureDynamicRefexIndexes(TtkConceptChronicle storageConcept, List<UUID> refexesToIndex, List<Integer[]> columnConfiguration) 
 			throws NoSuchAlgorithmException, UnsupportedEncodingException, PropertyVetoException
 	{
-		//In TTK land, this is done by adding a new dynamic refex to the member list refex that keeps track of index rules.
+		//In TTK land, this is done by adding a new dynamic sememe to the member list refex that keeps track of index rules.
 		if (storageConcept.getRefsetMembersDynamic() == null)
 		{
 			storageConcept.setRefsetMembers(new ArrayList<TtkRefexAbstractMemberChronicle<?>>());
