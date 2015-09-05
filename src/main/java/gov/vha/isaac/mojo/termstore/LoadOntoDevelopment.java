@@ -47,9 +47,8 @@ public class LoadOntoDevelopment extends AbstractMojo {
     /**
      * {@code ConceptModel} for the resulting database. {@code ConceptModel.OTF_CONCEPT_MODEL} 
      * by default. 
-     * TODO change to default ConceptModel.OCHRE_CONCEPT_MODEL when ready. 
      */
-    @Parameter(defaultValue = "OTF_CONCEPT_MODEL", name = "conceptModelString")
+    @Parameter(defaultValue = "OCHRE_CONCEPT_MODEL", name = "conceptModelString")
     private String conceptModelString;
 
     @Override

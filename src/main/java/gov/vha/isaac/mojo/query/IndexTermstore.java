@@ -14,22 +14,17 @@
  */
 package gov.vha.isaac.mojo.query;
 
-//~--- non-JDK imports --------------------------------------------------------
-
 import java.util.ArrayList;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.ihtsdo.otf.tcc.api.store.TerminologyStoreDI;
-import org.ihtsdo.otf.tcc.lookup.Hk2Looker;
-import org.ihtsdo.otf.tcc.model.index.service.IndexerBI;
-
-//~--- JDK imports ------------------------------------------------------------
-
 
 import java.util.List;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.ihtsdo.otf.tcc.lookup.Hk2Looker;
+import gov.vha.isaac.ochre.api.LookupService;
+import gov.vha.isaac.ochre.api.ObjectChronicleTaskService;
+import gov.vha.isaac.ochre.api.index.IndexServiceBI;
 
 /**
  * Goal which indexes a database using indexer services on the classpath.
@@ -44,23 +39,17 @@ public class IndexTermstore extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException {
         try {
-
-            TerminologyStoreDI store    = Hk2Looker.get().getService(TerminologyStoreDI.class);
-            getLog().info("Found store: " + store);
-                        
-            List<IndexerBI>    indexers = Hk2Looker.get().getAllServices(IndexerBI.class);
+            List<IndexServiceBI> indexers = Hk2Looker.get().getAllServices(IndexServiceBI.class);
             List<String> indexerNames = new ArrayList<>();
-            indexers.stream().forEach((IndexerBI i) -> indexerNames.add(i.getIndexerName()));
+            indexers.stream().forEach((IndexServiceBI i) -> indexerNames.add(i.getIndexerName()));
             getLog().info("Found indexers: " + indexerNames);
 
             getLog().info("Starting indexing. ");
-            store.index().get();
+            LookupService.get().getService(ObjectChronicleTaskService.class).startIndexTask((Class<? extends IndexServiceBI>[])null).get();
             getLog().info("Finished indexing. ");
 
         } catch (Exception ex) {
             throw new MojoExecutionException(ex.getLocalizedMessage(), ex);
         }
     }
-    
-    
 }
