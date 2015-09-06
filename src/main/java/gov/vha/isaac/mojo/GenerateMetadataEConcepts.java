@@ -18,15 +18,7 @@
  */
 package gov.vha.isaac.mojo;
 
-import gov.vha.isaac.metadata.source.IsaacMetadataAuxiliaryBinding;
-import gov.vha.isaac.ochre.api.component.sememe.version.DynamicSememe;
-import gov.vha.isaac.ochre.model.constants.IsaacMetadataConstants;
-import gov.vha.isaac.ochre.util.UuidT5Generator;
-import java.beans.PropertyVetoException;
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -55,10 +47,9 @@ import org.ihtsdo.otf.tcc.dto.component.attribute.TtkConceptAttributesChronicle;
 import org.ihtsdo.otf.tcc.dto.component.description.TtkDescriptionChronicle;
 import org.ihtsdo.otf.tcc.dto.component.refex.TtkRefexAbstractMemberChronicle;
 import org.ihtsdo.otf.tcc.dto.component.refex.type_uuid.TtkRefexUuidMemberChronicle;
-import org.ihtsdo.otf.tcc.dto.component.refexDynamic.TtkRefexDynamicMemberChronicle;
-import org.ihtsdo.otf.tcc.dto.component.refexDynamic.data.TtkRefexDynamicData;
-import org.ihtsdo.otf.tcc.dto.component.refexDynamic.data.dataTypes.TtkRefexDynamicString;
 import org.ihtsdo.otf.tcc.dto.component.relationship.TtkRelationshipChronicle;
+import gov.vha.isaac.metadata.source.IsaacMetadataAuxiliaryBinding;
+import gov.vha.isaac.ochre.util.UuidT5Generator;
 
 /**
  * {@link GenerateMetadataEConcepts}
@@ -171,140 +162,93 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException
 	{
-		try
-		{
-			outputFile = outputFile.getAbsoluteFile();
-			outputFile.getParentFile().mkdirs();
-			if (!outputFile.getParentFile().exists())
-			{
-				throw new MojoExecutionException("Cannot create the folder " + outputFile.getParentFile().getAbsolutePath());
-			}
-
-			DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
-			
-			ArrayList<ConceptSpec> conceptSpecsToProcess = new ArrayList<>();
-			
-
-			if (conceptSpecs != null)
-			{
-				for (ConceptSpec cs : conceptSpecs)
-				{
-					conceptSpecsToProcess.add(cs);
-				}
-			}
-			if (classesWithConceptSpecs != null)
-			{
-				for (String cs : classesWithConceptSpecs)
-				{
-					conceptSpecsToProcess.addAll(getSpecsFromClass(cs));
-				}
-			}
-			
-			if (terminologyRoots != null && terminologyRoots.length > 0)
-			{
-				getLog().info("Will create " + terminologyRoots.length + " additional root concepts");
-				for (int i = 0; i < terminologyRoots.length; i++)
-				{
-					ConceptSpec cs = terminologyRoots[i].getConceptSpec();
-					//Need to do stated and inferred, otherwise, we can't browse, on inferred mode, nor on inferred_then_stated mode
-					cs.setRelSpecs(new RelSpec[] {new RelSpec(cs, IsaacMetadataAuxiliaryBinding.IS_A, IsaacMetadataAuxiliaryBinding.ISAAC_ROOT)}); //stated
-					
-					//leave this off for now, see if classifier cleans it up
-							//new RelSpec(conceptsToAddAsRoots[i], Snomed.IS_A, ISAAC.ISAAC_ROOT, SnomedMetadataRf2.INFERRED_RELATIONSHIP_RF2)}); //inferred  
-					conceptSpecsToProcess.add(cs);
-				}
-			}
-			
-			List<UUID> refexesToIndex = new ArrayList<>();
-			List<Integer[]> columnsToIndex = new ArrayList<>();
-			TtkConceptChronicle indexConfigConcept = null;
-			
-			int count = 0;
-			for (ConceptSpec cs : conceptSpecsToProcess)
-			{
-				TtkConceptChronicle converted = convert(cs);
-				
-				if (IsaacMetadataConstants.DYNAMIC_SEMEME_INDEX_CONFIGURATION.getUUID().equals(cs.getPrimodialUuid()))
-				{
-					//Need to delay writing this concept
-					indexConfigConcept = converted;
-				}
-				else
-				{
-					if (writeAsChangeSetFormat)
-					{
-						dos.writeLong(System.currentTimeMillis());
-					}
-					converted.writeExternal(dos);
-					count++;
-				}
-			}
-			if (indexConfigConcept != null)
-			{
-				if (writeAsChangeSetFormat)
-				{
-					dos.writeLong(System.currentTimeMillis());
-				}
-				configureDynamicRefexIndexes(indexConfigConcept, refexesToIndex, columnsToIndex);
-				indexConfigConcept.writeExternal(dos);
-				count++;
-			}
-			dos.flush();
-			dos.close();
-			getLog().info("Wrote " + count + " concepts to " + outputFile.getAbsolutePath() + ".");
-		}
-		catch (IOException | IllegalArgumentException | IllegalAccessException | ClassNotFoundException | NoSuchAlgorithmException | PropertyVetoException e)
-		{
-			throw new MojoExecutionException("Failure", e);
-		}
-	}
-	
-	public static TtkRefexDynamicMemberChronicle addDynamicAnnotation(TtkComponentChronicle<?,?> component, UUID assemblageID, TtkRefexDynamicData[] data) 
-			throws NoSuchAlgorithmException, UnsupportedEncodingException
-	{
-		//TODO this should have a validator for data columns aligning with the refex description
-		TtkRefexDynamicMemberChronicle DynamicSememe = new TtkRefexDynamicMemberChronicle();
-		DynamicSememe.setComponentUuid(component.getPrimordialComponentUuid());
-		DynamicSememe.setRefexAssemblageUuid(assemblageID);
-		DynamicSememe.setData(data);
-		setUUIDForRefex(DynamicSememe, data, null);
-		setRevisionAttributes(DynamicSememe, null, component.getTime());
-
-		if (component.getAnnotationsDynamic() == null)
-		{
-			component.setAnnotationsDynamic(new ArrayList<TtkRefexDynamicMemberChronicle>());
-		}
-		component.getAnnotationsDynamic().add(DynamicSememe);
-		return DynamicSememe;
-	}
-	
-	/**
-	 * @param namespace - optional - uses {@link DynamicSememe#DYNAMIC_SEMEME_NAMESPACE} if not specified
-	 * @return - the generated string used for refex creation 
-	 */
-	public static String setUUIDForRefex(TtkRefexDynamicMemberChronicle DynamicSememe, TtkRefexDynamicData[] data, UUID namespace) throws NoSuchAlgorithmException, 
-		UnsupportedEncodingException
-	{
-		StringBuilder sb = new StringBuilder();
-		sb.append(DynamicSememe.getRefexAssemblageUuid().toString()); 
-		sb.append(DynamicSememe.getComponentUuid().toString());
-		if (data != null)
-		{
-			for (TtkRefexDynamicData d : data)
-			{
-				if (d == null)
-				{
-					sb.append("null");
-				}
-				else
-				{
-					sb.append(d.getRefexDataType().getDisplayName());
-					sb.append(new String(d.getData()));
-				}
-			}
-		}
-		DynamicSememe.setPrimordialComponentUuid(UuidT5Generator.get((namespace == null ? RefexCAB.refexSpecNamespace : namespace), sb.toString()));
-		return sb.toString();
+		throw new MojoExecutionException("This shouldn't be used any longer");
+//		try
+//		{
+//			outputFile = outputFile.getAbsoluteFile();
+//			outputFile.getParentFile().mkdirs();
+//			if (!outputFile.getParentFile().exists())
+//			{
+//				throw new MojoExecutionException("Cannot create the folder " + outputFile.getParentFile().getAbsolutePath());
+//			}
+//
+//			DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
+//			
+//			ArrayList<ConceptSpec> conceptSpecsToProcess = new ArrayList<>();
+//			
+//
+//			if (conceptSpecs != null)
+//			{
+//				for (ConceptSpec cs : conceptSpecs)
+//				{
+//					conceptSpecsToProcess.add(cs);
+//				}
+//			}
+//			if (classesWithConceptSpecs != null)
+//			{
+//				for (String cs : classesWithConceptSpecs)
+//				{
+//					conceptSpecsToProcess.addAll(getSpecsFromClass(cs));
+//				}
+//			}
+//			
+//			if (terminologyRoots != null && terminologyRoots.length > 0)
+//			{
+//				getLog().info("Will create " + terminologyRoots.length + " additional root concepts");
+//				for (int i = 0; i < terminologyRoots.length; i++)
+//				{
+//					ConceptSpec cs = terminologyRoots[i].getConceptSpec();
+//					//Need to do stated and inferred, otherwise, we can't browse, on inferred mode, nor on inferred_then_stated mode
+//					cs.setRelSpecs(new RelSpec[] {new RelSpec(cs, IsaacMetadataAuxiliaryBinding.IS_A, IsaacMetadataAuxiliaryBinding.ISAAC_ROOT)}); //stated
+//					
+//					//leave this off for now, see if classifier cleans it up
+//							//new RelSpec(conceptsToAddAsRoots[i], Snomed.IS_A, ISAAC.ISAAC_ROOT, SnomedMetadataRf2.INFERRED_RELATIONSHIP_RF2)}); //inferred  
+//					conceptSpecsToProcess.add(cs);
+//				}
+//			}
+//			
+//			List<UUID> refexesToIndex = new ArrayList<>();
+//			List<Integer[]> columnsToIndex = new ArrayList<>();
+//			TtkConceptChronicle indexConfigConcept = null;
+//			
+//			int count = 0;
+//			for (ConceptSpec cs : conceptSpecsToProcess)
+//			{
+//				TtkConceptChronicle converted = convert(cs);
+//				
+//				if (IsaacMetadataConstants.DYNAMIC_SEMEME_INDEX_CONFIGURATION.getUUID().equals(cs.getPrimodialUuid()))
+//				{
+//					//Need to delay writing this concept
+//					indexConfigConcept = converted;
+//				}
+//				else
+//				{
+//					if (writeAsChangeSetFormat)
+//					{
+//						dos.writeLong(System.currentTimeMillis());
+//					}
+//					converted.writeExternal(dos);
+//					count++;
+//				}
+//			}
+//			if (indexConfigConcept != null)
+//			{
+//				if (writeAsChangeSetFormat)
+//				{
+//					dos.writeLong(System.currentTimeMillis());
+//				}
+//				configureDynamicRefexIndexes(indexConfigConcept, refexesToIndex, columnsToIndex);
+//				indexConfigConcept.writeExternal(dos);
+//				count++;
+//			}
+//			dos.flush();
+//			dos.close();
+//			getLog().info("Wrote " + count + " concepts to " + outputFile.getAbsolutePath() + ".");
+//		}
+//		catch (IOException | IllegalArgumentException | IllegalAccessException | ClassNotFoundException | NoSuchAlgorithmException | PropertyVetoException e)
+//		{
+//			throw new MojoExecutionException("Failure", e);
+//		}
 	}
 	
 	private List<ConceptSpec> getSpecsFromClass(String className) throws IllegalArgumentException, IllegalAccessException, ClassNotFoundException
@@ -478,42 +422,7 @@ public class GenerateMetadataEConcepts extends AbstractMojo
 			return rel;
 	}
 	
-	private static void configureDynamicRefexIndexes(TtkConceptChronicle storageConcept, List<UUID> refexesToIndex, List<Integer[]> columnConfiguration) 
-			throws NoSuchAlgorithmException, UnsupportedEncodingException, PropertyVetoException
-	{
-		//In TTK land, this is done by adding a new dynamic sememe to the member list refex that keeps track of index rules.
-		if (storageConcept.getRefsetMembersDynamic() == null)
-		{
-			storageConcept.setRefsetMembers(new ArrayList<TtkRefexAbstractMemberChronicle<?>>());
-		}
-		
-		for (int i = 0; i < refexesToIndex.size(); i++)
-		{
-			TtkRefexDynamicMemberChronicle DynamicSememe = new TtkRefexDynamicMemberChronicle();
-			DynamicSememe.setComponentUuid(refexesToIndex.get(i));
-			DynamicSememe.setRefexAssemblageUuid(storageConcept.getPrimordialUuid());  //This is a member refex - so assemblageID == storageConceptID
-			
-			TtkRefexDynamicData[] data = null;
-			if (columnConfiguration.get(i) != null && columnConfiguration.get(i).length > 0)
-			{
-				data = new TtkRefexDynamicData[1];
-				StringBuilder buf = new StringBuilder();
-				for (int dataItem : columnConfiguration.get(i))
-				{
-					buf.append(dataItem);
-					buf.append(",");
-				}
-				buf.setLength(buf.length() - 1);
 
-				data[0] = new TtkRefexDynamicString(buf.toString());
-				DynamicSememe.setData(data);
-			}
-			setUUIDForRefex(DynamicSememe, data, null);
-			setRevisionAttributes(DynamicSememe, null, storageConcept.getConceptAttributes().getTime());
-			storageConcept.getRefsetMembersDynamic().add(DynamicSememe);
-		}
-	}
-	
 	public static void main(String[] args) throws MojoExecutionException, MojoFailureException
 	{
 		GenerateMetadataEConcepts gmc = new GenerateMetadataEConcepts(new File("foo.jbin"), new String[] {"org.ihtsdo.otf.tcc.api.metadata.binding.DynamicSememe"},
