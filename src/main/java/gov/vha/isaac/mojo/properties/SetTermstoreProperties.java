@@ -46,6 +46,9 @@ public class SetTermstoreProperties extends AbstractMojo {
         assert System.getProperties().containsKey(Constants.SEARCH_ROOT_LOCATION_PROPERTY) == false;
 
         ConfigurationService configurationService = LookupService.getService(ConfigurationService.class);
+        if (configurationService == null) {
+            throw new RuntimeException("No implementation of ConfigurationService available.  You probably need newtons-cradle on your classpath");
+        }
         if (datastoreRootLocation != null) {
             System.setProperty(Constants.DATA_STORE_ROOT_LOCATION_PROPERTY, datastoreRootLocation);
             getLog().info("Datastore Root: " + datastoreRootLocation);
