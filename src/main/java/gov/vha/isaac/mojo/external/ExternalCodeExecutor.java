@@ -67,7 +67,7 @@ public class ExternalCodeExecutor extends AbstractMojo
 			
 			if (quasiMojo == null)
 			{
-				throw new MojoExecutionException("Could not locate a TransformI implementation with the name '" + quasiMojoName + "'.");
+				throw new MojoExecutionException("Could not locate a QuasiMojo implementation with the name '" + quasiMojoName + "'.");
 			}
 			
 			quasiMojo.outputDirectory = outputDirectory;
