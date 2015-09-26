@@ -13,6 +13,8 @@
         <Logger name="gov.va.oia.HK2Utilities" level="info"/>
         <Logger name="gov.vha.isaac.ochre.api.LookupService" level="info"/>
         <Logger name="gov.vha.isaac.cradle.collections.UuidIntMapMap" level="info"/>
+        <Logger name="org.ihtsdo.otf.query.lucene.LuceneIndexer" level="info"/>
+        <Logger name="gov.vha.isaac.expression.parser.ISAACVisitor" level="info"/>
         <Root level="debug">
             <AppenderRef ref="STDOUT"/>
         </Root>

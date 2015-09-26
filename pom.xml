@@ -4,11 +4,11 @@
     <parent>
         <groupId>gov.vha.isaac</groupId>
         <artifactId>isaac-parent</artifactId>
-        <version>1.9</version>
+        <version>1.10</version>
     </parent>
 
     <artifactId>isaac-mojo</artifactId>
-    <version>1.11</version>
+    <version>1.12</version>
     <packaging>maven-plugin</packaging>
     <name>ISAAC Maven Mojos</name>
 
@@ -19,8 +19,8 @@
     </scm>
 
     <properties>
-        <ochre.version>2.32</ochre.version>
-        <isaac-metadata.version>1.35</isaac-metadata.version>
+        <ochre.version>2.33</ochre.version>
+        <isaac-metadata.version>1.36</isaac-metadata.version>
     </properties>
 
     <dependencies>
